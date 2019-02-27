@@ -1,0 +1,20 @@
+{
+  "name": "PhysicsEngine",
+  "version": "0.0.1",
+  "summary": "Default PhysicsEngine for Bubble Blast.",
+  "homepage": "https://github.com/cs3217-1819/2019-ps4-jieliangang",
+  "authors": {
+    "jieliangang": "jieliangang@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/cs3217-1819/2019-ps4-jieliangang.git",
+    "branch": "cocoapod"
+  },
+  "source_files": [
+    "GameEngine/GameEngine/PhysicsEngine/",
+    "GameEngine/GameEngine/PhysicsEngine/Shape/"
+  ],
+  "platforms": {
+    "ios": "8.0"
+  }
+}

@@ -1,0 +1,11 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'BubbleBlast' do
+  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for BubbleBlast
+  pod 'PhysicsEngine', :git => 'https://github.com/cs3217-1819/2019-ps4-jieliangang.git', :branch => 'cocoapod'
+
+end

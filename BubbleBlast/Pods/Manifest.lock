@@ -1,0 +1,22 @@
+PODS:
+  - PhysicsEngine (0.0.1)
+
+DEPENDENCIES:
+  - PhysicsEngine (from `https://github.com/cs3217-1819/2019-ps4-jieliangang.git`, branch `cocoapod`)
+
+EXTERNAL SOURCES:
+  PhysicsEngine:
+    :branch: cocoapod
+    :git: https://github.com/cs3217-1819/2019-ps4-jieliangang.git
+
+CHECKOUT OPTIONS:
+  PhysicsEngine:
+    :commit: a668da0e1f59a85d32ca4c7e2d151d12444b0952
+    :git: https://github.com/cs3217-1819/2019-ps4-jieliangang.git
+
+SPEC CHECKSUMS:
+  PhysicsEngine: a69c097672897e618bbf12a4f431da9913ac7dc2
+
+PODFILE CHECKSUM: fc942e60758bd46526d8911e6243883c2d4ff973
+
+COCOAPODS: 1.6.1
