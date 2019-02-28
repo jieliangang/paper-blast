@@ -33,10 +33,20 @@ class GameEngine {
     // Center positions of cells in the isometric bubble grid
     private var gridPositions: [Vector2]
 
-    init(minX: Double, maxX: Double, minY: Double, maxY: Double, gridPositions: [Vector2]) {
+    init(minX: Double, maxX: Double, minY: Double, maxY: Double,
+         gridPositions: [Vector2], initialBubbleTypes: [BubbleType]) {
         self.gridPositions = gridPositions
         physicsEngine = PhysicsEngine(minX: minX, maxX: maxX, minY: minY, maxY: maxY,
                                       gravity: Constants.Physics.gravity)
+
+        let radius = (maxX - minX) / Double(Constants.Game.numOfBubblesInEvenRow) / 2
+        for (index, type) in initialBubbleTypes.enumerated() where type != .empty {
+            let object = BubbleObject(type: type, position: gridPositions[index], shape: Shape.circle(radius: radius))
+
+            stationaryBubbleObjects[index] = object
+            physicsEngine.addStationaryBody(object.body)
+            dictionary[ObjectIdentifier(object.body)] = object
+        }
 
         // Collision resolution
         physicsEngine.resolveMovingBodyCollisionWithWall = resolveMovingObjectCollisionWithWall
@@ -110,7 +120,8 @@ class GameEngine {
                 self.removeAdjacentSimilarColorBubbles(of: index)
                 self.dropUnconnectedObjects()
             })
-        // add more cases in the future for different type to act differently
+        default:
+            break
         }
     }
 

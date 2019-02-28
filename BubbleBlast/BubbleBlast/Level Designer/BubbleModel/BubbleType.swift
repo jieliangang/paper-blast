@@ -12,6 +12,7 @@ import Foundation
  Adapted from PS3
  */
 enum BubbleType: String, Codable, CaseIterable {
+    case empty
     case colorRed
     case colorYellow
     case colorGreen
@@ -21,5 +22,18 @@ enum BubbleType: String, Codable, CaseIterable {
         let typeToGet = [BubbleType.colorBlue, BubbleType.colorRed, BubbleType.colorGreen, BubbleType.colorYellow]
         let index = Int(arc4random_uniform(UInt32(typeToGet.count)))
         return typeToGet[index]
+    }
+    
+    /// Cycle color if `BubbleType` is of color
+    /// - Returns: Cycled `BubbleType` if original type is color
+    ///             else returns same `BubbleType`
+    func next() -> BubbleType {
+        switch self {
+        case .colorYellow: return .colorRed
+        case .colorRed: return .colorBlue
+        case .colorGreen: return .colorYellow
+        case .colorBlue: return .colorGreen
+        default: return self
+        }
     }
 }

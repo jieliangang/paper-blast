@@ -25,14 +25,13 @@ class GameViewController: UIViewController {
     private var gameViewFrame: CGRect {
         return renderArea.frame
     }
-    private var bubbleSize: CGFloat {
-        return renderArea.frame.width / CGFloat(Constants.Game.numOfBubblesInEvenRow)
-    }
+    private var bubbleSize = UIScreen.main.bounds.width / CGFloat(Constants.Game.numOfBubblesInEvenRow)
     private var playButtonLocation: CGRect {
         return setInitialBubbleLocation()
     }
 
     lazy var gameEngine: GameEngine = initializeGameEngine()
+
     private var resourceImageManager: [BubbleType: UIImage] = [:]
 
     private var currentPlayBubbleType: BubbleType = BubbleType.randomType() {
@@ -52,14 +51,7 @@ class GameViewController: UIViewController {
 
     private var canShoot = true
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        let offsetX = cannon.bounds.width * (0.5 - 0.5)
-        let offsetY = cannon.bounds.height * (0.8 - 0.5)
-        cannon.center = CGPoint(x: cannonOriginalPosition.x + offsetX, y: cannonOriginalPosition.y + offsetY)
-        cannon.translatesAutoresizingMaskIntoConstraints = true
-        cannon.layer.anchorPoint = CGPoint(x: 0.5, y: 0.8)
-    }
+    var initialBubbleTypes: [BubbleType]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -170,13 +162,17 @@ class GameViewController: UIViewController {
         } else {
             angle = -CGFloat.pi/2 - angle
         }
-        cannon.transform = CGAffineTransform(rotationAngle: angle)
+        let offsetY = cannon.bounds.height * (0.8 - 0.5)
+        var transform = CGAffineTransform.identity
+        transform = transform.translatedBy(x: 0, y: offsetY)
+        transform = transform.rotated(by: angle)
+        transform = transform.translatedBy(x: 0, y: -offsetY)
+        cannon.transform = transform
     }
 
     private func loadBubble() {
         canShoot = false
         bubbleToShoot.image = nil
-        nextBubble.translatesAutoresizingMaskIntoConstraints = true
         nextBubble.layer.position = nextBubbleOriginalPosition
         gameArea.sendSubviewToBack(nextBubble)
         UIView.animate(withDuration: 0.2,
@@ -201,6 +197,7 @@ class GameViewController: UIViewController {
         guard let index = dict["index"] as? Int else {
             return
         }
+        UIView.setAnimationsEnabled(true)
         bubbleArea.reloadItems(at: [IndexPath(item: index, section: 0)])
     }
 
@@ -223,9 +220,11 @@ class GameViewController: UIViewController {
             }
             gridPositions.append(Vector2(point: attribute.center))
         }
-        let gameEngine = GameEngine(minX: Double(0), maxX: Double(gameViewFrame.maxX),
-                                    minY: Double(0), maxY: Double(gameViewFrame.maxY),
-                                    gridPositions: gridPositions)
+        let gameEngine = GameEngine(minX: Double(0), maxX: Double(UIScreen.main.bounds.width),
+                                    minY: Double(0), maxY: Double(UIScreen.main.bounds.height),
+                                    gridPositions: gridPositions,
+                                    initialBubbleTypes: initialBubbleTypes ?? [BubbleType]())
+
         return gameEngine
     }
 
@@ -300,8 +299,8 @@ extension GameViewController: UICollectionViewDataSource {
         case .colorYellow: name = "bubble-orange.png"
         case .colorRed: name = "bubble-red.png"
         case .colorGreen: name = "bubble-green.png"
+        default: name = ""
         }
         return name
     }
 }
-
