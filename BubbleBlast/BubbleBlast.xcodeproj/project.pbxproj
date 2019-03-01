@@ -17,7 +17,8 @@
 		D746C9082228540100CF743A /* RectangularGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C9072228540100CF743A /* RectangularGridLayout.swift */; };
 		D746C90A2228F3E800CF743A /* SegmentedControlDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C9092228F3E800CF743A /* SegmentedControlDelegate.swift */; };
 		D746C90C22292D5600CF743A /* GameEngine+CollisionResolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90B22292D5600CF743A /* GameEngine+CollisionResolution.swift */; };
-		D746C90E2229318900CF743A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90D2229318900CF743A /* Player.swift */; };
+		D746C90E2229318900CF743A /* PlayerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90D2229318900CF743A /* PlayerType.swift */; };
+		D746C9102229943000CF743A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90F2229943000CF743A /* Player.swift */; };
 		D74FF4FE2226CF8700B3DDC5 /* GameBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF4F92226CF8700B3DDC5 /* GameBubble.swift */; };
 		D74FF4FF2226CF8700B3DDC5 /* ColorBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF4FA2226CF8700B3DDC5 /* ColorBubble.swift */; };
 		D74FF5002226CF8700B3DDC5 /* GameBubbleSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF4FB2226CF8700B3DDC5 /* GameBubbleSet.swift */; };
@@ -55,7 +56,8 @@
 		D746C9072228540100CF743A /* RectangularGridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangularGridLayout.swift; sourceTree = "<group>"; };
 		D746C9092228F3E800CF743A /* SegmentedControlDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlDelegate.swift; sourceTree = "<group>"; };
 		D746C90B22292D5600CF743A /* GameEngine+CollisionResolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameEngine+CollisionResolution.swift"; sourceTree = "<group>"; };
-		D746C90D2229318900CF743A /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		D746C90D2229318900CF743A /* PlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerType.swift; sourceTree = "<group>"; };
+		D746C90F2229943000CF743A /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		D74FF4F92226CF8700B3DDC5 /* GameBubble.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameBubble.swift; sourceTree = "<group>"; };
 		D74FF4FA2226CF8700B3DDC5 /* ColorBubble.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorBubble.swift; sourceTree = "<group>"; };
 		D74FF4FB2226CF8700B3DDC5 /* GameBubbleSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameBubbleSet.swift; sourceTree = "<group>"; };
@@ -220,7 +222,8 @@
 				D794E5122224F92C00F03BFE /* BubbleObject.swift */,
 				D794E5102224F92C00F03BFE /* GameEngine.swift */,
 				D746C90B22292D5600CF743A /* GameEngine+CollisionResolution.swift */,
-				D746C90D2229318900CF743A /* Player.swift */,
+				D746C90D2229318900CF743A /* PlayerType.swift */,
+				D746C90F2229943000CF743A /* Player.swift */,
 			);
 			path = GameEngine;
 			sourceTree = "<group>";
@@ -377,6 +380,7 @@
 				D74FF5092226CFE500B3DDC5 /* LevelDesignerViewController.swift in Sources */,
 				D746C90A2228F3E800CF743A /* SegmentedControlDelegate.swift in Sources */,
 				D794E5132224F92C00F03BFE /* GameEngine.swift in Sources */,
+				D746C9102229943000CF743A /* Player.swift in Sources */,
 				D74FF50C2226CFE500B3DDC5 /* PopOverViewController.swift in Sources */,
 				D74FF5022226CF8700B3DDC5 /* EmptyBubble.swift in Sources */,
 				D746C90622283E0F00CF743A /* ResourceManager.swift in Sources */,
@@ -398,7 +402,7 @@
 				D746C90C22292D5600CF743A /* GameEngine+CollisionResolution.swift in Sources */,
 				D794E5142224F92C00F03BFE /* BubbleType.swift in Sources */,
 				D746C9082228540100CF743A /* RectangularGridLayout.swift in Sources */,
-				D746C90E2229318900CF743A /* Player.swift in Sources */,
+				D746C90E2229318900CF743A /* PlayerType.swift in Sources */,
 				D74FF4FF2226CF8700B3DDC5 /* ColorBubble.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
