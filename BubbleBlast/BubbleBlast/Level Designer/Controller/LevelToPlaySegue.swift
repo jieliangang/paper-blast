@@ -12,7 +12,7 @@ class LevelToPlaySegue: UIStoryboardSegue {
     override func perform() {
         shift()
     }
-    
+
     func shift() {
         let toViewController = self.destination
         let fromViewController = self.source
@@ -27,7 +27,7 @@ class LevelToPlaySegue: UIStoryboardSegue {
 
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
             toViewController.view.transform = CGAffineTransform.identity
-        }, completion: { success in
+        }, completion: { _ in
             fromViewController.present(toViewController, animated: false, completion: nil)
         })
     }

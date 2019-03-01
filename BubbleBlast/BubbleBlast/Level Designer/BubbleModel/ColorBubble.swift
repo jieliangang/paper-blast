@@ -12,8 +12,10 @@
 class ColorBubble: GameBubble, Codable {
     var type: BubbleType
 
+    private let typeArray = [BubbleType.colorBlue, BubbleType.colorGreen, BubbleType.colorRed, BubbleType.colorYellow]
+
     init?(type: BubbleType) {
-        guard [.colorBlue, .colorGreen, .colorRed, .colorYellow].contains(type) else {
+        guard typeArray.contains(type) else {
             return nil
         }
         self.type = type
@@ -21,6 +23,6 @@ class ColorBubble: GameBubble, Codable {
     }
 
     private func checkRep() -> Bool {
-        return [.colorBlue, .colorGreen, .colorRed, .colorYellow].contains(type)
+        return typeArray.contains(type)
     }
 }

@@ -26,23 +26,20 @@ class GameViewController: UIViewController {
         return renderArea.frame
     }
     private var bubbleSize = UIScreen.main.bounds.width / CGFloat(Constants.Game.numOfBubblesInEvenRow)
-    private var playButtonLocation: CGRect {
-        return setInitialBubbleLocation()
-    }
-
-    lazy var gameEngine: GameEngine = initializeGameEngine()
+    private lazy var playButtonLocation = bubbleToShoot.frame
+    private lazy var gameEngine: GameEngine = initializeGameEngine()
 
     private var resourceImageManager: [BubbleType: UIImage] = [:]
 
     private var currentPlayBubbleType: BubbleType = BubbleType.randomType() {
         didSet {
-            bubbleToShoot.image = UIImage(named: imageName(of: currentPlayBubbleType))
+            bubbleToShoot.image = UIImage(named: ResourceManager.imageName(of: currentPlayBubbleType))
         }
     }
 
     private var nextPlayBubbleType: BubbleType = BubbleType.randomType() {
         didSet {
-            nextBubble.image = UIImage(named: imageName(of: nextPlayBubbleType))
+            nextBubble.image = UIImage(named: ResourceManager.imageName(of: nextPlayBubbleType))
         }
     }
 
@@ -51,19 +48,23 @@ class GameViewController: UIViewController {
 
     private var canShoot = true
 
-    var initialBubbleTypes: [BubbleType]?
+    var game: GameBubbleSet?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        guard let isHexagonal = game?.isHexagonal else {
+            return
+        }
         // Set up bubble grid
         bubbleArea.dataSource = self
         bubbleArea.isScrollEnabled = false
-        bubbleArea.collectionViewLayout = AlternatingBubbleLayout()
+        bubbleArea.collectionViewLayout = isHexagonal ? AlternatingBubbleLayout()
+                                                      : RectangularGridLayout()
 
         // Set up shooting bubble
-        bubbleToShoot.image = UIImage(named: imageName(of: currentPlayBubbleType))
-        nextBubble.image = UIImage(named: imageName(of: nextPlayBubbleType))
+        bubbleToShoot.image = UIImage(named: ResourceManager.imageName(of: currentPlayBubbleType))
+        nextBubble.image = UIImage(named: ResourceManager.imageName(of: nextPlayBubbleType))
 
         // Set up cannon
         drawCannon()
@@ -80,7 +81,7 @@ class GameViewController: UIViewController {
 
         // Set up resource manager
         for type in BubbleType.allCases {
-            resourceImageManager[type] = UIImage(named: imageName(of: type))
+            resourceImageManager[type] = UIImage(named: ResourceManager.imageName(of: type))
         }
 
         // Set up notifications
@@ -115,7 +116,7 @@ class GameViewController: UIViewController {
     private func tap(sender: UITapGestureRecognizer) {
         let tapLocation = sender.location(in: self.renderArea)
         setCannonDirection(tapLocation)
-        shootBubble(tapLocation)
+        shootBubble(tapLocation, player: Player.one)
     }
 
     @objc
@@ -126,7 +127,7 @@ class GameViewController: UIViewController {
         // Only shoot once user releases after aiming
         case .ended:
             let releaseLocation = sender.location(in: self.renderArea)
-            shootBubble(releaseLocation)
+            shootBubble(releaseLocation, player: Player.one)
         default:
             return
         }
@@ -134,7 +135,7 @@ class GameViewController: UIViewController {
 
     /// Shoot bubble in game
     /// - Parameter location: point which user tapped/release
-    private func shootBubble(_ location: CGPoint) {
+    private func shootBubble(_ location: CGPoint, player: Player) {
         // Only shoot when user tap above the top of the bubble(cannon)
         guard location.y < playButtonLocation.minY else {
             return
@@ -150,7 +151,8 @@ class GameViewController: UIViewController {
                                                        y: playButtonLocation.midY),
                                tapLocation: location,
                                bubbleSize: bubbleSize,
-                               currentPlayBubbleType: currentPlayBubbleType)
+                               currentPlayBubbleType: currentPlayBubbleType,
+                               player: player)
     }
 
     private func setCannonDirection(_ location: CGPoint) {
@@ -213,17 +215,26 @@ class GameViewController: UIViewController {
     }
 
     private func initializeGameEngine() -> GameEngine {
+
+        guard let initialGame = game else {
+            fatalError("Fail to initialize game engine")
+        }
+
+        let maxNumOfBubbles = initialGame.isHexagonal ? Constants.Game.maxNumOfBubblesInHex
+                                                      : Constants.Game.maxNumOfBubblesInRect
+
         var gridPositions = [Vector2]()
-        for item in 0..<Constants.Game.maxNumOfBubbles {
+        for item in 0..<maxNumOfBubbles {
             guard let attribute = bubbleArea.layoutAttributesForItem(at: IndexPath(item: item, section: 0)) else {
                 break
             }
             gridPositions.append(Vector2(point: attribute.center))
         }
+
         let gameEngine = GameEngine(minX: Double(0), maxX: Double(UIScreen.main.bounds.width),
                                     minY: Double(0), maxY: Double(UIScreen.main.bounds.height),
                                     gridPositions: gridPositions,
-                                    initialBubbleTypes: initialBubbleTypes ?? [BubbleType]())
+                                    game: initialGame, maxNumOfBubbles: maxNumOfBubbles)
 
         return gameEngine
     }
@@ -275,7 +286,14 @@ extension GameViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return Constants.Game.maxNumOfBubbles
+        guard let isHexagonal = game?.isHexagonal else {
+            return Constants.Game.maxNumOfBubblesInHex
+        }
+        if isHexagonal {
+            return Constants.Game.maxNumOfBubblesInHex
+        } else {
+            return Constants.Game.maxNumOfBubblesInRect
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -287,20 +305,8 @@ extension GameViewController: UICollectionViewDataSource {
         if let bubble = gameEngine.stationaryBubbleObjects[indexPath.item] {
             cell.setImage(resourceImageManager[bubble.type])
         } else {
-            cell.setImage(nil)
+            cell.setImage(resourceImageManager[BubbleType.empty])
         }
         return cell
-    }
-
-    private func imageName(of type: BubbleType) -> String {
-        let name: String
-        switch type {
-        case .colorBlue: name = "bubble-blue.png"
-        case .colorYellow: name = "bubble-orange.png"
-        case .colorRed: name = "bubble-red.png"
-        case .colorGreen: name = "bubble-green.png"
-        default: name = ""
-        }
-        return name
     }
 }

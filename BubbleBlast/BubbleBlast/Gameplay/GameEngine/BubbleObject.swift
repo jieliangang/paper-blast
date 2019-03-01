@@ -18,15 +18,18 @@ class BubbleObject {
 
     let body: RigidBody
     var type: BubbleType
+    let player: Player
 
-    init(type: BubbleType, position: Vector2, shape: Shape) {
+    init(type: BubbleType, position: Vector2, shape: Shape, player: Player) {
         self.type = type
         self.body = RigidBody(position: position, shape: shape)
+        self.player = player
     }
 
-    init(type: BubbleType, position: Vector2, velocity: Vector2, shape: Shape) {
+    init(type: BubbleType, position: Vector2, velocity: Vector2, shape: Shape, player: Player) {
         self.type = type
         self.body = RigidBody(position: position, velocity: velocity, shape: shape)
+        self.player = player
     }
 }
 
@@ -34,11 +37,13 @@ class BubbleObject {
 extension BubbleObject: Hashable {
     static func == (lhs: BubbleObject, rhs: BubbleObject) -> Bool {
         return lhs.body == rhs.body &&
-            lhs.type == rhs.type
+            lhs.type == rhs.type &&
+            lhs.player == rhs.player
     }
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(body)
         hasher.combine(type)
+        hasher.combine(player)
     }
 }

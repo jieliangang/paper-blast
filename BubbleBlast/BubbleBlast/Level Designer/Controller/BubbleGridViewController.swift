@@ -10,16 +10,21 @@ import UIKit
 
 class BubbleGridViewController: UICollectionViewController {
 
-    var game = GameBubbleSet(numberOfRows: 12)
+    var game = GameBubbleSet(numberOfRows: Constants.LevelDesigner.numOfRows)
 
     var currentSelectedType: BubbleType?
 
+    var totalNumberOfBubbles = Constants.LevelDesigner.totalNumOfBubblesInHex
+
+    weak var delegate: SegmentedControlDelegate?
+
     @IBOutlet private var bubbleArea: UICollectionView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         bubbleArea.dataSource = self
         bubbleArea.isScrollEnabled = false
+
         bubbleArea.collectionViewLayout = AlternatingBubbleLayout()
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tap))
@@ -30,6 +35,29 @@ class BubbleGridViewController: UICollectionViewController {
 
         let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
         bubbleArea.addGestureRecognizer(longGesture)
+    }
+
+    func updateGridLayout(isHex: Bool) {
+        game.updateGridLayout(toHex: isHex)
+        setGridLayout(isHex: isHex)
+    }
+
+    private func setGridLayout(isHex: Bool) {
+        isHex ? setToHexagonalGrid() : setToRectangularGrid()
+    }
+
+    private func setToHexagonalGrid() {
+        bubbleArea.collectionViewLayout.invalidateLayout()
+        totalNumberOfBubbles = Constants.LevelDesigner.totalNumOfBubblesInHex
+        bubbleArea.collectionViewLayout = AlternatingBubbleLayout()
+        bubbleArea.reloadData()
+    }
+
+    private func setToRectangularGrid() {
+        bubbleArea.collectionViewLayout.invalidateLayout()
+        totalNumberOfBubbles = Constants.LevelDesigner.totalNumOfBubblesInRect
+        bubbleArea.collectionViewLayout = RectangularGridLayout()
+        bubbleArea.reloadData()
     }
 
     // MARK: Gesture Recognizer Actions of Bubble Area
@@ -70,7 +98,8 @@ class BubbleGridViewController: UICollectionViewController {
 
     func loadDataFrom(_ name: String) throws {
         try game = StorageManager.retrieve(name, as: GameBubbleSet.self)
-        bubbleArea.reloadData()
+        setGridLayout(isHex: game.isHexagonal)
+        delegate?.onHexagonalSelected(game.isHexagonal)
     }
 
     func save(name: String) throws {
@@ -107,7 +136,7 @@ extension BubbleGridViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return game.numberOfBubbles
+        return totalNumberOfBubbles
     }
 
     override func collectionView(_ collectionView: UICollectionView,
@@ -117,20 +146,8 @@ extension BubbleGridViewController {
                 return BubbleCell()
         }
         if let bubble = game.bubble(at: indexPath.item) {
-            cell.setImage(UIImage(named: imageName(of: bubble.type)))
+            cell.setImage(UIImage(named: ResourceManager.imageName(of: bubble.type)))
         }
         return cell
-    }
-
-    private func imageName(of type: BubbleType) -> String {
-        let name: String
-        switch type {
-        case .colorBlue: name = "bubble-blue.png"
-        case .colorYellow: name = "bubble-orange.png"
-        case .colorRed: name = "bubble-red.png"
-        case .colorGreen: name = "bubble-green.png"
-        default: name = "bubble-translucent_white.png"
-        }
-        return name
     }
 }

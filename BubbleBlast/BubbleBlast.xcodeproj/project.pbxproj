@@ -12,6 +12,12 @@
 		D730F0902224573F000FD7CB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D730F08E2224573F000FD7CB /* Main.storyboard */; };
 		D730F09222245741000FD7CB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D730F09122245741000FD7CB /* Assets.xcassets */; };
 		D730F09522245741000FD7CB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D730F09322245741000FD7CB /* LaunchScreen.storyboard */; };
+		D746C904222836F400CF743A /* SpecialBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C903222836F400CF743A /* SpecialBubble.swift */; };
+		D746C90622283E0F00CF743A /* ResourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90522283E0F00CF743A /* ResourceManager.swift */; };
+		D746C9082228540100CF743A /* RectangularGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C9072228540100CF743A /* RectangularGridLayout.swift */; };
+		D746C90A2228F3E800CF743A /* SegmentedControlDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C9092228F3E800CF743A /* SegmentedControlDelegate.swift */; };
+		D746C90C22292D5600CF743A /* GameEngine+CollisionResolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90B22292D5600CF743A /* GameEngine+CollisionResolution.swift */; };
+		D746C90E2229318900CF743A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90D2229318900CF743A /* Player.swift */; };
 		D74FF4FE2226CF8700B3DDC5 /* GameBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF4F92226CF8700B3DDC5 /* GameBubble.swift */; };
 		D74FF4FF2226CF8700B3DDC5 /* ColorBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF4FA2226CF8700B3DDC5 /* ColorBubble.swift */; };
 		D74FF5002226CF8700B3DDC5 /* GameBubbleSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF4FB2226CF8700B3DDC5 /* GameBubbleSet.swift */; };
@@ -44,6 +50,12 @@
 		D730F09122245741000FD7CB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D730F09422245741000FD7CB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D730F09622245741000FD7CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D746C903222836F400CF743A /* SpecialBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialBubble.swift; sourceTree = "<group>"; };
+		D746C90522283E0F00CF743A /* ResourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceManager.swift; sourceTree = "<group>"; };
+		D746C9072228540100CF743A /* RectangularGridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangularGridLayout.swift; sourceTree = "<group>"; };
+		D746C9092228F3E800CF743A /* SegmentedControlDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlDelegate.swift; sourceTree = "<group>"; };
+		D746C90B22292D5600CF743A /* GameEngine+CollisionResolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameEngine+CollisionResolution.swift"; sourceTree = "<group>"; };
+		D746C90D2229318900CF743A /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		D74FF4F92226CF8700B3DDC5 /* GameBubble.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameBubble.swift; sourceTree = "<group>"; };
 		D74FF4FA2226CF8700B3DDC5 /* ColorBubble.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorBubble.swift; sourceTree = "<group>"; };
 		D74FF4FB2226CF8700B3DDC5 /* GameBubbleSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameBubbleSet.swift; sourceTree = "<group>"; };
@@ -133,10 +145,11 @@
 		D74FF4F82226CF8700B3DDC5 /* BubbleModel */ = {
 			isa = PBXGroup;
 			children = (
+				D74FF4FB2226CF8700B3DDC5 /* GameBubbleSet.swift */,
 				D74FF4F92226CF8700B3DDC5 /* GameBubble.swift */,
 				D74FF4FA2226CF8700B3DDC5 /* ColorBubble.swift */,
-				D74FF4FB2226CF8700B3DDC5 /* GameBubbleSet.swift */,
 				D74FF4FD2226CF8700B3DDC5 /* EmptyBubble.swift */,
+				D746C903222836F400CF743A /* SpecialBubble.swift */,
 				D794E5112224F92C00F03BFE /* BubbleType.swift */,
 			);
 			path = BubbleModel;
@@ -149,8 +162,9 @@
 				D74FF5052226CFE500B3DDC5 /* BubbleGridViewController.swift */,
 				D74FF5062226CFE500B3DDC5 /* UIAlertController+CustomAlert.swift */,
 				D74FF5072226CFE500B3DDC5 /* PopOverViewController.swift */,
-				D74FF5082226CFE500B3DDC5 /* LoadDelegate.swift */,
 				D74FF5142226DAC200B3DDC5 /* LevelToPlaySegue.swift */,
+				D74FF5082226CFE500B3DDC5 /* LoadDelegate.swift */,
+				D746C9092228F3E800CF743A /* SegmentedControlDelegate.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -168,6 +182,7 @@
 		D74FF50F2226D02D00B3DDC5 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				D746C90522283E0F00CF743A /* ResourceManager.swift */,
 				D74FF5102226D02D00B3DDC5 /* StorageManager.swift */,
 				D74FF5112226D02D00B3DDC5 /* StorageError.swift */,
 			);
@@ -204,6 +219,8 @@
 			children = (
 				D794E5122224F92C00F03BFE /* BubbleObject.swift */,
 				D794E5102224F92C00F03BFE /* GameEngine.swift */,
+				D746C90B22292D5600CF743A /* GameEngine+CollisionResolution.swift */,
+				D746C90D2229318900CF743A /* Player.swift */,
 			);
 			path = GameEngine;
 			sourceTree = "<group>";
@@ -212,6 +229,7 @@
 			isa = PBXGroup;
 			children = (
 				D794E5172224F93700F03BFE /* AlternatingBubbleLayout.swift */,
+				D746C9072228540100CF743A /* RectangularGridLayout.swift */,
 				D794E5182224F93700F03BFE /* BubbleCell.swift */,
 			);
 			path = BubbleGrid;
@@ -357,9 +375,11 @@
 			files = (
 				D74FF5132226D02D00B3DDC5 /* StorageError.swift in Sources */,
 				D74FF5092226CFE500B3DDC5 /* LevelDesignerViewController.swift in Sources */,
+				D746C90A2228F3E800CF743A /* SegmentedControlDelegate.swift in Sources */,
 				D794E5132224F92C00F03BFE /* GameEngine.swift in Sources */,
 				D74FF50C2226CFE500B3DDC5 /* PopOverViewController.swift in Sources */,
 				D74FF5022226CF8700B3DDC5 /* EmptyBubble.swift in Sources */,
+				D746C90622283E0F00CF743A /* ResourceManager.swift in Sources */,
 				D74FF5152226DAC200B3DDC5 /* LevelToPlaySegue.swift in Sources */,
 				D74FF4FE2226CF8700B3DDC5 /* GameBubble.swift in Sources */,
 				D794E5152224F92C00F03BFE /* BubbleObject.swift in Sources */,
@@ -372,9 +392,13 @@
 				D794E51A2224F93700F03BFE /* BubbleCell.swift in Sources */,
 				D74FF50A2226CFE500B3DDC5 /* BubbleGridViewController.swift in Sources */,
 				D794E50B2224F90E00F03BFE /* GameViewController.swift in Sources */,
+				D746C904222836F400CF743A /* SpecialBubble.swift in Sources */,
 				D730F08B2224573F000FD7CB /* AppDelegate.swift in Sources */,
 				D794E50E2224F91F00F03BFE /* Constants.swift in Sources */,
+				D746C90C22292D5600CF743A /* GameEngine+CollisionResolution.swift in Sources */,
 				D794E5142224F92C00F03BFE /* BubbleType.swift in Sources */,
+				D746C9082228540100CF743A /* RectangularGridLayout.swift in Sources */,
+				D746C90E2229318900CF743A /* Player.swift in Sources */,
 				D74FF4FF2226CF8700B3DDC5 /* ColorBubble.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

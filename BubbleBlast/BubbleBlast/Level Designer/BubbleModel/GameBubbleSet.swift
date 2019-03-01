@@ -13,13 +13,23 @@
 class GameBubbleSet: Codable {
     private var bubbles = [GameBubble]()
 
-    /// Creates a `GameBubbleSet` with all bubbles set to `EmptyBubble`
+    private(set) var isHexagonal = true {
+        didSet {
+            if isHexagonal {
+                removePadding()
+            } else {
+                addPadding()
+            }
+        }
+    }
+
+    /// Creates a hexagonal `GameBubbleSet` with all bubbles set to `EmptyBubble`
     /// - Parameter numberOfRows: the number of rows the bubble grid contains
     init(numberOfRows: Int) {
         guard numberOfRows >= 0 else {
             return
         }
-        let numberOfBubbles = 23 * (numberOfRows / 2) + 12 * (numberOfRows % 2 )
+        let numberOfBubbles = Constants.LevelDesigner.totalNumOfBubblesInRect
         for _ in 0..<numberOfBubbles {
             bubbles.append(EmptyBubble())
         }
@@ -77,10 +87,35 @@ class GameBubbleSet: Codable {
     var numberOfBubbles: Int {
         return bubbles.count
     }
-    
+
     /// Return array of bubble types
-    var bubbleTypes: [BubbleType]{
+    var bubbleTypes: [BubbleType] {
         return bubbles.map { $0.type }
+    }
+
+    /// Add padding bubbles
+    func addPadding() {
+        for index in stride(from: Constants.Game.numOfBubblesInRowSet,
+                            through: Constants.LevelDesigner.totalNumOfBubblesInHex,
+                            by: Constants.Game.numOfBubblesInRowSet).reversed() {
+                                bubbles.insert(EmptyBubble(), at: index)
+        }
+    }
+
+    /// Remove padding bubbles
+    func removePadding() {
+        for index in stride(from: Constants.Game.numOfBubblesInRowSet,
+                            through: Constants.LevelDesigner.totalNumOfBubblesInRect,
+                            by: Constants.Game.numOfBubblesInRowSet + 1).reversed() {
+                                bubbles.remove(at: index)
+        }
+    }
+
+    func updateGridLayout(toHex: Bool) {
+        guard toHex != isHexagonal else {
+            return
+        }
+        isHexagonal = toHex
     }
 
     // Return corresponding `GameBubble` subclass of `BubbleType`
@@ -93,19 +128,33 @@ class GameBubbleSet: Codable {
                 return EmptyBubble()
             }
             return bubble
+        default:
+            guard let bubble = SpecialBubble(type: type) else {
+                return EmptyBubble()
+            }
+            return bubble
         }
     }
 
     // MARK: Encodable
+    enum CodingKeys: String, CodingKey {
+        case bubbles
+        case gridType
+    }
+
     func encode(to encoder: Encoder) throws {
         let codableBubbleSet = bubbles.map { $0.type }
-        var container = encoder.singleValueContainer()
-        try container.encode(codableBubbleSet)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(codableBubbleSet, forKey: .bubbles)
+        try container.encode(isHexagonal, forKey: .gridType)
     }
 
     required init(from decoder: Decoder) throws {
-        let values = try decoder.singleValueContainer()
-        let codableBubbles = try values.decode([BubbleType].self)
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let codableBubbles = try values.decode([BubbleType].self, forKey: .bubbles)
+        let gridType = try values.decode(Bool.self, forKey: .gridType)
+
         bubbles = codableBubbles.map { bubbleOfType($0) }
+        updateGridLayout(toHex: gridType)
     }
 }

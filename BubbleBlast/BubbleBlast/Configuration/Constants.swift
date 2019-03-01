@@ -18,11 +18,22 @@ struct Constants {
     struct Game {
         static let fps = 1.0/60
         static let timestep = 1.0/60
-        static let numOfRows = 14
+        static let numOfRows = LevelDesigner.numOfRows + 2
         static let numOfBubblesInEvenRow = 12
         static let numOfBubblesInOddRow = numOfBubblesInEvenRow - 1
         static let numOfBubblesInRowSet = numOfBubblesInEvenRow + numOfBubblesInOddRow
-        static let maxNumOfBubbles = numOfBubblesInRowSet * numOfRows / 2
+        static let maxNumOfBubblesInHex = numOfBubblesInRowSet * numOfRows / 2 
+        static let maxNumOfBubblesInRect = numOfRows * numOfBubblesInEvenRow
         static let numOfBubblesToPop = 3
+        static var randomDroppingInitialVelocity: Vector2 {
+            return Vector2(xComponent: Double.random(in: -200...200),
+                           yComponent: Double.random(in: -150...(-100)))
+        }
+    }
+    struct LevelDesigner {
+        static let numOfRows = 12
+        static let totalNumOfBubblesInHex = Game.numOfBubblesInRowSet * (numOfRows / 2) +
+                                            Game.numOfBubblesInOddRow * (numOfRows % 2)
+        static let totalNumOfBubblesInRect = Game.numOfBubblesInEvenRow * numOfRows
     }
 }

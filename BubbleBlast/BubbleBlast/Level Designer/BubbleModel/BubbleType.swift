@@ -17,13 +17,17 @@ enum BubbleType: String, Codable, CaseIterable {
     case colorYellow
     case colorGreen
     case colorBlue
+    case indestructible
+    case lightning
+    case bomb
+    case star
 
     static func randomType() -> BubbleType {
         let typeToGet = [BubbleType.colorBlue, BubbleType.colorRed, BubbleType.colorGreen, BubbleType.colorYellow]
         let index = Int(arc4random_uniform(UInt32(typeToGet.count)))
         return typeToGet[index]
     }
-    
+
     /// Cycle color if `BubbleType` is of color
     /// - Returns: Cycled `BubbleType` if original type is color
     ///             else returns same `BubbleType`
@@ -35,5 +39,13 @@ enum BubbleType: String, Codable, CaseIterable {
         case .colorBlue: return .colorGreen
         default: return self
         }
+    }
+
+    func hasPower() -> Bool {
+        return [BubbleType.lightning, .bomb, .star].contains(self)
+    }
+
+    func isColor() -> Bool {
+        return [BubbleType.colorBlue, .colorRed, .colorGreen, .colorYellow].contains(self)
     }
 }

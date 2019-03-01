@@ -12,6 +12,7 @@ class LevelDesignerViewController: UIViewController {
 
     @IBOutlet private var bubbleContainerView: UIView!
     @IBOutlet private var currentLevel: UILabel!
+    @IBOutlet private var gridToggle: UISegmentedControl!
 
     private var bubbleGridViewController: BubbleGridViewController?
 
@@ -21,14 +22,26 @@ class LevelDesignerViewController: UIViewController {
                 fatalError("Error while setting BubbleGridViewController")
             }
             bubbleGridViewController = childVC
+            bubbleGridViewController?.delegate = self
         } else if segue.identifier == "levelToPlay" {
             guard let childVC = segue.destination as? GameViewController else {
                 fatalError("Error while setting GameViewController")
             }
-            guard let bubbleTypeSet = bubbleGridViewController?.game.bubbleTypes else {
+            guard let game = bubbleGridViewController?.game else {
                 fatalError("Error while setting GameViewController")
             }
-            childVC.initialBubbleTypes = bubbleTypeSet
+            childVC.game = game
+        }
+    }
+
+    @IBAction func gridToggled(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            bubbleGridViewController?.updateGridLayout(isHex: true)
+        case 1:
+            bubbleGridViewController?.updateGridLayout(isHex: false)
+        default:
+            break
         }
     }
 
@@ -43,9 +56,14 @@ class LevelDesignerViewController: UIViewController {
             case "ButtonBlue": type = .colorBlue
             case "ButtonGreen": type = .colorGreen
             case "ButtonErase": type = .empty
+            case "ButtonIndestructible": type = .indestructible
+            case "ButtonLightning": type = .lightning
+            case "ButtonBomb": type = .bomb
+            case "ButtonStar": type = .star
             default: type = nil
             }
             bubbleGridViewController?.currentSelectedType = type
+            print(bubbleGridViewController?.currentSelectedType?.rawValue ?? "no")
         }
     }
 
@@ -137,3 +155,9 @@ extension LevelDesignerViewController: LoadDelegate {
     }
 }
 
+// MARK: SegmentedControlDelegate
+extension LevelDesignerViewController: SegmentedControlDelegate {
+    func onHexagonalSelected(_ isHexagonal: Bool) {
+        gridToggle.selectedSegmentIndex =  isHexagonal ? 0 : 1
+    }
+}
