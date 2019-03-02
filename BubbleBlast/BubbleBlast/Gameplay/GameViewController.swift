@@ -15,65 +15,73 @@ class GameViewController: UIViewController {
     @IBOutlet var bubbleArea: UICollectionView!
     @IBOutlet var renderArea: UIView!
     @IBOutlet var inputArea: UIView!
-    @IBOutlet var bubbleToShoot: UIImageView!
     @IBOutlet var stageArea: UIView!
-    @IBOutlet var cannonBase: UIImageView!
-    @IBOutlet var cannon: UIImageView!
+
+    @IBOutlet var singlePlayer: UIView!
+    @IBOutlet var cannonSinglePlayer: UIImageView!
+    @IBOutlet var bubbleToShoot: UIImageView!
     @IBOutlet var nextBubble: UIImageView!
-    @IBOutlet var gameArea: UIView!
+    @IBOutlet var secondNextBubble: UIImageView!
+    @IBOutlet var cannonBase: UIImageView!
+    @IBOutlet var tapSingle: UITapGestureRecognizer!
+    @IBOutlet var panSingle: UIPanGestureRecognizer!
 
-    private var gameViewFrame: CGRect {
-        return renderArea.frame
-    }
+    @IBOutlet var multiplayerOne: UIView!
+    @IBOutlet var cannonPlayerOne: UIImageView!
+    @IBOutlet var bubbleToShootPlayerOne: UIImageView!
+    @IBOutlet var nextBubblePlayerOne: UIImageView!
+    @IBOutlet var secondNextBubblePlayerOne: UIImageView!
+    @IBOutlet var cannonBasePlayerOne: UIImageView!
+    @IBOutlet var tapOne: UITapGestureRecognizer!
+    @IBOutlet var panOne: UIPanGestureRecognizer!
+
+    @IBOutlet var multiplayerTwo: UIView!
+    @IBOutlet var cannonPlayerTwo: UIImageView!
+    @IBOutlet var bubbleToShootPlayerTwo: UIImageView!
+    @IBOutlet var nextBubblePlayerTwo: UIImageView!
+    @IBOutlet var secondNextBubblePlayerTwo: UIImageView!
+    @IBOutlet var cannonBasePlayerTwo: UIImageView!
+    @IBOutlet var tapTwo: UITapGestureRecognizer!
+    @IBOutlet var panTwo: UIPanGestureRecognizer!
+
     private var bubbleSize = UIScreen.main.bounds.width / CGFloat(Constants.Game.numOfBubblesInEvenRow)
-    private lazy var playButtonLocation = bubbleToShoot.frame
+    private lazy var bubbleFrame = bubbleToShoot.frame
     private lazy var gameEngine: GameEngine = initializeGameEngine()
-
     private var resourceImageManager: [BubbleType: UIImage] = [:]
 
-    private var currentPlayBubbleType: BubbleType = BubbleType.randomType() {
-        didSet {
-            bubbleToShoot.image = UIImage(named: ResourceManager.imageName(of: currentPlayBubbleType))
-        }
-    }
+    private lazy var playerSingle = Player(mainView: singlePlayer, cannon: cannonSinglePlayer,
+                                           bubbleToShoot: bubbleToShoot,
+                                            nextBubble: nextBubble, secondNextBubble: secondNextBubble,
+                                            cannonBase: cannonBase,
+                                            tapGestureRecognizer: tapSingle, panGestureRecognizer: panSingle)
+    private lazy var playerOne = Player(mainView: multiplayerOne, cannon: cannonPlayerOne,
+                                        bubbleToShoot: bubbleToShootPlayerOne,
+                                        nextBubble: nextBubblePlayerOne, secondNextBubble: secondNextBubblePlayerOne,
+                                        cannonBase: cannonBasePlayerOne,
+                                        tapGestureRecognizer: tapOne, panGestureRecognizer: panOne)
+    private lazy var playerTwo = Player(mainView: multiplayerTwo, cannon: cannonPlayerTwo,
+                                        bubbleToShoot: bubbleToShootPlayerTwo,
+                                        nextBubble: nextBubblePlayerTwo, secondNextBubble: secondNextBubblePlayerTwo,
+                                        cannonBase: cannonBasePlayerTwo,
+                                        tapGestureRecognizer: tapTwo, panGestureRecognizer: panTwo)
 
-    private var nextPlayBubbleType: BubbleType = BubbleType.randomType() {
-        didSet {
-            nextBubble.image = UIImage(named: ResourceManager.imageName(of: nextPlayBubbleType))
-        }
-    }
-
-    private lazy var nextBubbleOriginalPosition = nextBubble.layer.position
-    private lazy var cannonOriginalPosition = cannon.layer.position
-
-    private var canShoot = true
-
-    var game: GameBubbleSet?
+    var game = GameBubbleSet(numberOfRows: Constants.Game.numOfRows)
+    var multiplayer = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let isHexagonal = game?.isHexagonal else {
-            return
-        }
         // Set up bubble grid
         bubbleArea.dataSource = self
         bubbleArea.isScrollEnabled = false
-        bubbleArea.collectionViewLayout = isHexagonal ? AlternatingBubbleLayout()
-                                                      : RectangularGridLayout()
+        bubbleArea.collectionViewLayout = game.isHexagonal ? AlternatingBubbleLayout()
+                                                           : RectangularGridLayout()
 
-        // Set up shooting bubble
-        bubbleToShoot.image = UIImage(named: ResourceManager.imageName(of: currentPlayBubbleType))
-        nextBubble.image = UIImage(named: ResourceManager.imageName(of: nextPlayBubbleType))
+        // Set up views based on player mode
+        setupPlayerMode()
 
         // Set up cannon
         drawCannon()
-
-        // Set up gestures
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tap))
-        inputArea.addGestureRecognizer(tapGesture)
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(pan))
-        inputArea.addGestureRecognizer(panGesture)
 
         // Set up game loop
         Timer.scheduledTimer(timeInterval: Constants.Game.fps, target: self,
@@ -91,6 +99,61 @@ class GameViewController: UIViewController {
         let gameOverNotification = Notification.Name("gameOver")
         NotificationCenter.default.addObserver(self, selector: #selector(gameOver(_:)),
                                                name: gameOverNotification, object: nil)
+    }
+
+    private func setupPlayerMode() {
+        if multiplayer {
+            singlePlayer.isHidden = true
+            tapSingle.isEnabled = false
+            panSingle.isEnabled = false
+            playerOne.resetLoadedBubbles(set: game.bubblesLeft)
+            playerTwo.resetLoadedBubbles(set: game.bubblesLeft)
+        } else {
+            multiplayerOne.isHidden = true
+            multiplayerTwo.isHidden = true
+            tapOne.isEnabled = false
+            tapTwo.isEnabled = false
+            panOne.isEnabled = false
+            panTwo.isEnabled = false
+            playerSingle.resetLoadedBubbles(set: game.bubblesLeft)
+        }
+    }
+
+    @IBAction func tap(_ sender: UITapGestureRecognizer) {
+        let tapLocation = sender.location(in: self.renderArea)
+        guard tapLocation.y < bubbleFrame.minY else {
+            return
+        }
+        let player = getPlayerBasedOn(location: tapLocation)
+        setCannonDirection(tapLocation, playerId: player)
+        shootBubble(tapLocation, playerId: player)
+    }
+
+    @IBAction func pan(_ sender: UIPanGestureRecognizer) {
+        let location = sender.location(in: self.renderArea)
+
+        guard location.y < bubbleFrame.minY else {
+            return
+        }
+
+        if (sender == panOne) && location.x > renderArea.frame.midX {
+            return
+        } else if (sender == panTwo) && location.x < renderArea.frame.midX {
+            return
+        }
+        switch sender.state {
+        case .began, .changed:
+            let location = sender.location(in: self.renderArea)
+            let player = getPlayerBasedOn(location: location)
+            setCannonDirection(location, playerId: player)
+        // Only shoot once user releases after aiming
+        case .ended:
+            let releaseLocation = sender.location(in: self.renderArea)
+            let player = getPlayerBasedOn(location: releaseLocation)
+            shootBubble(releaseLocation, playerId: player)
+        default:
+            return
+        }
     }
 
     /// Update game and rendering engine
@@ -112,52 +175,30 @@ class GameViewController: UIViewController {
         }
     }
 
-    @objc
-    private func tap(sender: UITapGestureRecognizer) {
-        let tapLocation = sender.location(in: self.renderArea)
-        setCannonDirection(tapLocation)
-        shootBubble(tapLocation, player: Player.one)
-    }
-
-    @objc
-    private func pan(sender: UIPanGestureRecognizer) {
-        switch sender.state {
-        case .began, .changed:
-            setCannonDirection(sender.location(in: self.renderArea))
-        // Only shoot once user releases after aiming
-        case .ended:
-            let releaseLocation = sender.location(in: self.renderArea)
-            shootBubble(releaseLocation, player: Player.one)
-        default:
-            return
-        }
-    }
-
     /// Shoot bubble in game
     /// - Parameter location: point which user tapped/release
-    private func shootBubble(_ location: CGPoint, player: Player) {
-        // Only shoot when user tap above the top of the bubble(cannon)
-        guard location.y < playButtonLocation.minY else {
+    private func shootBubble(_ location: CGPoint, playerId: PlayerType) {
+        let selectedPlayer = player(playerId)
+        guard selectedPlayer.canShoot else {
             return
         }
 
-        guard canShoot else {
-            return
-        }
-
-        cannon.startAnimating()
-        loadBubble()
-        gameEngine.shootBubble(originLocation: CGPoint(x: playButtonLocation.midX,
-                                                       y: playButtonLocation.midY),
+        let bubble = selectedPlayer.bubbleToShoot
+        selectedPlayer.cannon.startAnimating()
+        gameEngine.shootBubble(originLocation: CGPoint(x: bubble.frame.midX,
+                                                       y: bubble.frame.midY),
                                tapLocation: location,
                                bubbleSize: bubbleSize,
-                               currentPlayBubbleType: currentPlayBubbleType,
-                               player: player)
+                               currentPlayBubbleType: selectedPlayer.currentBubbleType,
+                               player: playerId)
+        loadBubble(playerId)
     }
 
-    private func setCannonDirection(_ location: CGPoint) {
-        let xDistance = location.x - playButtonLocation.midX
-        let yDistance = location.y - playButtonLocation.midY
+    private func setCannonDirection(_ location: CGPoint, playerId: PlayerType) {
+        let xDistance: CGFloat = location.x - player(playerId).bubbleToShoot.frame.midX
+        let yDistance: CGFloat = location.y - player(playerId).bubbleToShoot.frame.midY
+        let cannon = player(playerId).cannon
+
         var angle = atan(-yDistance/xDistance)
         if angle > 0 {
             angle = CGFloat.pi/2 - angle
@@ -172,23 +213,65 @@ class GameViewController: UIViewController {
         cannon.transform = transform
     }
 
-    private func loadBubble() {
-        canShoot = false
-        bubbleToShoot.image = nil
-        nextBubble.layer.position = nextBubbleOriginalPosition
-        gameArea.sendSubviewToBack(nextBubble)
-        UIView.animate(withDuration: 0.2,
-                       delay: 0,
-                       options: UIView.AnimationOptions.curveEaseInOut,
-                       animations: {
-                        self.nextBubble.layer.position = self.bubbleToShoot.layer.position
-                        },
-                       completion: { _ in
-                        self.currentPlayBubbleType = self.nextPlayBubbleType
-                        self.nextBubble.layer.position = self.nextBubbleOriginalPosition
-                        self.nextPlayBubbleType = BubbleType.randomType()
-                        self.canShoot = true
-                        })
+    private func loadBubble(_ playerId: PlayerType) {
+        let selectedPlayer = player(playerId)
+        selectedPlayer.canShoot = false
+        selectedPlayer.bubbleToShoot.image = nil
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn, animations: {
+            selectedPlayer.nextBubble.layer.position = selectedPlayer.bubbleToShoot.layer.position
+            selectedPlayer.secondNextBubble.layer.position = selectedPlayer.nextBubblePosition
+        }, completion: { _ in
+            selectedPlayer.currentBubbleType = selectedPlayer.nextBubbleType
+            selectedPlayer.nextBubbleType = selectedPlayer.secondNextBubbleType
+            selectedPlayer.secondNextBubbleType = self.gameEngine.randomBubbleType()
+            selectedPlayer.nextBubble.layer.position = selectedPlayer.nextBubblePosition
+
+            selectedPlayer.secondNextBubble.alpha = 0.0
+            selectedPlayer.secondNextBubble.layer.position = selectedPlayer.secondNextBubblePosition
+            UIView.animate(withDuration: 0.2, animations: {
+                selectedPlayer.secondNextBubble.alpha = 0.5
+            })
+            selectedPlayer.canShoot = true
+        })
+    }
+
+    private func player(_ playerId: PlayerType) -> Player {
+        switch playerId {
+        case .one: return playerOne
+        case .two: return playerTwo
+        default: return playerSingle
+        }
+    }
+
+    private func updateLoadedBubbles() {
+        let set = gameEngine.bubblesLeft
+        if multiplayer {
+            playerOne.updateLoadedBubbles(set: set)
+            playerTwo.updateLoadedBubbles(set: set)
+        } else {
+            playerSingle.updateLoadedBubbles(set: set)
+        }
+    }
+
+    private func getPlayerBasedOn(location: CGPoint) -> PlayerType {
+        if multiplayer {
+            if location.x < inputArea.frame.midX {
+                return .one
+            } else {
+                return .two
+            }
+        } else {
+            return .single
+        }
+    }
+
+    private func getBubbleOf(_ player: PlayerType) -> UIImageView {
+        switch player {
+        case .single: return bubbleToShoot
+        case .one: return bubbleToShootPlayerOne
+        case .two: return bubbleToShootPlayerTwo
+        default: return bubbleToShoot
+        }
     }
 
     @objc
@@ -201,6 +284,7 @@ class GameViewController: UIViewController {
         }
         UIView.setAnimationsEnabled(true)
         bubbleArea.reloadItems(at: [IndexPath(item: index, section: 0)])
+        updateLoadedBubbles()
     }
 
     @objc
@@ -215,12 +299,7 @@ class GameViewController: UIViewController {
     }
 
     private func initializeGameEngine() -> GameEngine {
-
-        guard let initialGame = game else {
-            fatalError("Fail to initialize game engine")
-        }
-
-        let maxNumOfBubbles = initialGame.isHexagonal ? Constants.Game.maxNumOfBubblesInHex
+        let maxNumOfBubbles = game.isHexagonal ? Constants.Game.maxNumOfBubblesInHex
                                                       : Constants.Game.maxNumOfBubblesInRect
 
         var gridPositions = [Vector2]()
@@ -234,17 +313,14 @@ class GameViewController: UIViewController {
         let gameEngine = GameEngine(minX: Double(0), maxX: Double(UIScreen.main.bounds.width),
                                     minY: Double(0), maxY: Double(UIScreen.main.bounds.height),
                                     gridPositions: gridPositions,
-                                    game: initialGame, maxNumOfBubbles: maxNumOfBubbles)
+                                    game: game, maxNumOfBubbles: maxNumOfBubbles)
 
         return gameEngine
     }
+}
 
-    private func setInitialBubbleLocation() -> CGRect {
-        return CGRect(x: gameViewFrame.width/2 - bubbleSize/2,
-                      y: bubbleSize * CGFloat(Constants.Game.numOfRows - 1),
-                      width: bubbleSize, height: bubbleSize)
-    }
-
+// MARK: Set up
+extension GameViewController {
     private func drawCannon() {
         guard let overallImage = UIImage(named: "cannon.png") else {
             return
@@ -271,13 +347,24 @@ class GameViewController: UIViewController {
             }
             cannonArray.append(UIImage(cgImage: croppedCannon))
         }
-        cannon.image = cannonArray[0]
 
-        cannon.animationImages = cannonArray
-        cannon.animationDuration = 1/4
-        cannon.animationRepeatCount = 1
+        if multiplayer {
+            cannonPlayerOne.image = cannonArray[0]
+            cannonPlayerOne.animationImages = cannonArray
+            cannonPlayerOne.animationDuration = 1/4
+            cannonPlayerOne.animationRepeatCount = 1
+
+            cannonPlayerTwo.image = cannonArray[0]
+            cannonPlayerTwo.animationImages = cannonArray
+            cannonPlayerTwo.animationDuration = 1/4
+            cannonPlayerTwo.animationRepeatCount = 1
+        } else {
+            cannonSinglePlayer.image = cannonArray[0]
+            cannonSinglePlayer.animationImages = cannonArray
+            cannonSinglePlayer.animationDuration = 1/4
+            cannonSinglePlayer.animationRepeatCount = 1
+        }
     }
-
 }
 
 extension GameViewController: UICollectionViewDataSource {
@@ -286,10 +373,7 @@ extension GameViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let isHexagonal = game?.isHexagonal else {
-            return Constants.Game.maxNumOfBubblesInHex
-        }
-        if isHexagonal {
+        if game.isHexagonal {
             return Constants.Game.maxNumOfBubblesInHex
         } else {
             return Constants.Game.maxNumOfBubblesInRect
@@ -308,5 +392,33 @@ extension GameViewController: UICollectionViewDataSource {
             cell.setImage(resourceImageManager[BubbleType.empty])
         }
         return cell
+    }
+}
+
+extension GameViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if gestureRecognizer == tapOne && touch.location(in: renderArea).x < renderArea.frame.midX {
+            return true
+        } else if gestureRecognizer == tapTwo && touch.location(in: renderArea).x > renderArea.frame.midX {
+            return true
+        } else if gestureRecognizer == panOne && touch.location(in: renderArea).x < renderArea.frame.midX {
+            return true
+        } else if gestureRecognizer == panTwo && touch.location(in: renderArea).x > renderArea.frame.midX {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if (gestureRecognizer == tapOne && otherGestureRecognizer == panOne) ||
+            (gestureRecognizer == panOne && otherGestureRecognizer == tapOne) ||
+            (gestureRecognizer == tapTwo && otherGestureRecognizer == panTwo) ||
+            (gestureRecognizer == panTwo && otherGestureRecognizer == tapTwo) {
+            return false
+        } else {
+            return true
+        }
     }
 }

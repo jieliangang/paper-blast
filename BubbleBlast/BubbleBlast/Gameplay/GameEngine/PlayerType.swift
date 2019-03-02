@@ -9,7 +9,7 @@
 import Foundation
 
 /**
- Player
+ Type of Player
  */
 enum PlayerType {
     case one, two, bot, single

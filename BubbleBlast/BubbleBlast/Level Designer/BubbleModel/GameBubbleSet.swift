@@ -118,6 +118,11 @@ class GameBubbleSet: Codable {
         isHexagonal = toHex
     }
 
+    var bubblesLeft: Set<BubbleType> {
+        return Set(bubbles.map { $0.type }
+                          .filter { $0.isColor()})
+    }
+
     // Return corresponding `GameBubble` subclass of `BubbleType`
     private func bubbleOfType(_ type: BubbleType) -> GameBubble {
         switch type {

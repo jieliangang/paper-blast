@@ -34,6 +34,16 @@ class GameEngine {
     // Center positions of cells in the isometric bubble grid
     private var gridPositions: [Vector2]
 
+    var bubblesLeft: Set<BubbleType> {
+        return Set(stationaryBubbleObjects.values
+            .map { $0.type }
+            .filter { $0.isColor()})
+    }
+
+    func randomBubbleType() -> BubbleType {
+        return bubblesLeft.randomElement() ?? BubbleType.colorRed
+    }
+
     let numOfBubblesInEvenRow = Constants.Game.numOfBubblesInEvenRow
     let numOfBubblesInOddRow: Int
     let maxNumOfBubblesInGame: Int
@@ -54,7 +64,7 @@ class GameEngine {
         let radius = (maxX - minX) / Double(Constants.Game.numOfBubblesInEvenRow) / 2
         for (index, type) in game.bubbleTypes.enumerated() where type != .empty {
             let object = BubbleObject(type: type, position: gridPositions[index],
-                                      shape: Shape.circle(radius: radius), player: Player.bot)
+                                      shape: Shape.circle(radius: radius), player: PlayerType.bot)
             stationaryBubbleObjects[index] = object
             stationaryBubbleObjectsMap[object] = index
             physicsEngine.addStationaryBody(object.body)
@@ -65,6 +75,7 @@ class GameEngine {
         physicsEngine.resolveMovingBodyCollisionWithWall = resolveMovingObjectCollisionWithWall
         physicsEngine.resolveMovingBodyCollisionWithStatBody = resolveCollisionWithStationaryObject
         physicsEngine.resolveDroppingBodyCollisionWithWall = resolveDroppingObjectCollisionWithWall
+        physicsEngine.resolveMovingBodyCollisionWithMovingBody = resolveElasticCollisionBetween
     }
 
     /// Update state of game and physics engine
@@ -80,7 +91,7 @@ class GameEngine {
     ///     - currentPlayBubbleType: type of bubble being shot
     func shootBubble(originLocation: CGPoint, tapLocation: CGPoint,
                      bubbleSize: CGFloat, currentPlayBubbleType: BubbleType,
-                     player: Player) {
+                     player: PlayerType) {
         let xDistance = tapLocation.x - originLocation.x
         let yDistance = tapLocation.y - originLocation.y
         guard yDistance < 0 else {
@@ -95,7 +106,7 @@ class GameEngine {
                                              yComponent: velocityMagnitude * Double(yDistance / distance)),
                            radius: Double(bubbleSize/2),
                            type: currentPlayBubbleType,
-                           player: Player.bot)
+                           player: player)
     }
 }
 
@@ -109,7 +120,7 @@ extension GameEngine {
     ///     - radius: radius of bubble
     ///     - type: type of bubble
     private func insertMovingBubble(position: Vector2, velocity: Vector2, radius: Double,
-                                    type: BubbleType, player: Player) {
+                                    type: BubbleType, player: PlayerType) {
         let object = BubbleObject(type: type, position: position, velocity: velocity,
                                   shape: Shape.circle(radius: radius),
                                   player: player)
@@ -136,7 +147,7 @@ extension GameEngine {
     ///     - index: index in bubble grid
     private func insertStationaryBubble(radius: Double, type: BubbleType, index: Int) {
         let object = BubbleObject(type: type, position: gridPositions[index],
-                                  shape: Shape.circle(radius: radius), player: Player.bot)
+                                  shape: Shape.circle(radius: radius), player: PlayerType.bot)
 
         stationaryBubbleObjects[index] = object
         stationaryBubbleObjectsMap[object] = index
@@ -573,8 +584,8 @@ extension GameEngine {
         }
         return nearestIndex
     }
-    
-    private func detectGameOver(index: Int) -> Bool{
+
+    private func detectGameOver(index: Int) -> Bool {
         if isHexagonal {
             return index >= Constants.Game.maxNumOfBubblesInHex - Constants.Game.numOfBubblesInEvenRow
         } else {
@@ -598,6 +609,15 @@ extension GameEngine {
     // Not used in PS4. Prepared for PS5.
     // Reference: https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional_collision_with_two_moving_objects
     private func resolveElasticCollisionBetween(_ bodyA: RigidBody, with bodyB: RigidBody) {
+        guard let objectA = dictionary[ObjectIdentifier(bodyA)],
+            let objectB = dictionary[(ObjectIdentifier(bodyB))] else {
+                print("not found")
+                return
+        }
+        guard objectA.player != objectB.player else {
+            return
+        }
+
         let velocityDifference = bodyA.velocity - bodyB.velocity
         let distanceDifference = bodyA.position - bodyB.position
 

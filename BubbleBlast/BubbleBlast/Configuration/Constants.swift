@@ -29,6 +29,7 @@ struct Constants {
             return Vector2(xComponent: Double.random(in: -200...200),
                            yComponent: Double.random(in: -150...(-100)))
         }
+        static let cannonAnimationTime = 1/4
     }
     struct LevelDesigner {
         static let numOfRows = 12

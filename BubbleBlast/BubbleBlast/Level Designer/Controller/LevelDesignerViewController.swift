@@ -15,6 +15,8 @@ class LevelDesignerViewController: UIViewController {
     @IBOutlet private var gridToggle: UISegmentedControl!
 
     private var bubbleGridViewController: BubbleGridViewController?
+    
+    private var multiplayerMode = false
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "bubbleGrid" {
@@ -31,6 +33,7 @@ class LevelDesignerViewController: UIViewController {
                 fatalError("Error while setting GameViewController")
             }
             childVC.game = game
+            childVC.multiplayer = multiplayerMode
         }
     }
 
@@ -42,6 +45,14 @@ class LevelDesignerViewController: UIViewController {
             bubbleGridViewController?.updateGridLayout(isHex: false)
         default:
             break
+        }
+    }
+
+    @IBAction func playerOptionSelected(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0: multiplayerMode = false
+        case 1: multiplayerMode = true
+        default: break
         }
     }
 

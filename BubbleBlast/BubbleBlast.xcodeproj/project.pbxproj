@@ -19,6 +19,7 @@
 		D746C90C22292D5600CF743A /* GameEngine+CollisionResolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90B22292D5600CF743A /* GameEngine+CollisionResolution.swift */; };
 		D746C90E2229318900CF743A /* PlayerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90D2229318900CF743A /* PlayerType.swift */; };
 		D746C9102229943000CF743A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C90F2229943000CF743A /* Player.swift */; };
+		D746C912222A26A300CF743A /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746C911222A26A300CF743A /* StartViewController.swift */; };
 		D74FF4FE2226CF8700B3DDC5 /* GameBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF4F92226CF8700B3DDC5 /* GameBubble.swift */; };
 		D74FF4FF2226CF8700B3DDC5 /* ColorBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF4FA2226CF8700B3DDC5 /* ColorBubble.swift */; };
 		D74FF5002226CF8700B3DDC5 /* GameBubbleSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF4FB2226CF8700B3DDC5 /* GameBubbleSet.swift */; };
@@ -58,6 +59,7 @@
 		D746C90B22292D5600CF743A /* GameEngine+CollisionResolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameEngine+CollisionResolution.swift"; sourceTree = "<group>"; };
 		D746C90D2229318900CF743A /* PlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerType.swift; sourceTree = "<group>"; };
 		D746C90F2229943000CF743A /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		D746C911222A26A300CF743A /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
 		D74FF4F92226CF8700B3DDC5 /* GameBubble.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameBubble.swift; sourceTree = "<group>"; };
 		D74FF4FA2226CF8700B3DDC5 /* ColorBubble.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorBubble.swift; sourceTree = "<group>"; };
 		D74FF4FB2226CF8700B3DDC5 /* GameBubbleSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameBubbleSet.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				D794E5162224F93700F03BFE /* BubbleGrid */,
 				D794E5092224F8F800F03BFE /* Gameplay */,
 				D730F08E2224573F000FD7CB /* Main.storyboard */,
+				D746C911222A26A300CF743A /* StartViewController.swift */,
 				D730F08A2224573F000FD7CB /* AppDelegate.swift */,
 				D730F09122245741000FD7CB /* Assets.xcassets */,
 				D730F09322245741000FD7CB /* LaunchScreen.storyboard */,
@@ -396,6 +399,7 @@
 				D794E51A2224F93700F03BFE /* BubbleCell.swift in Sources */,
 				D74FF50A2226CFE500B3DDC5 /* BubbleGridViewController.swift in Sources */,
 				D794E50B2224F90E00F03BFE /* GameViewController.swift in Sources */,
+				D746C912222A26A300CF743A /* StartViewController.swift in Sources */,
 				D746C904222836F400CF743A /* SpecialBubble.swift in Sources */,
 				D730F08B2224573F000FD7CB /* AppDelegate.swift in Sources */,
 				D794E50E2224F91F00F03BFE /* Constants.swift in Sources */,
