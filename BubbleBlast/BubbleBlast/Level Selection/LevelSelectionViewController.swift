@@ -82,7 +82,7 @@ extension LevelSelectionViewController: UICollectionViewDataSource, UICollection
         cell.layer.shadowColor = UIColor.black.cgColor
         cell.layer.shadowOffset = CGSize(width: 5.0, height: 5.0)
         cell.layer.shadowRadius = cell.frame.width / 20
-        cell.layer.shadowOpacity = 0.5
+        cell.layer.shadowOpacity = 0.1
         cell.layer.masksToBounds = false
         cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds,
                                              cornerRadius: cell.contentView.layer.cornerRadius).cgPath

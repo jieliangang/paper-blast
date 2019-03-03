@@ -21,7 +21,7 @@ class ResourceManager {
         case .bomb: name = "bubble-bomb.png"
         case .lightning: name = "bubble-lightning.png"
         case .star: name = "bubble-star.png"
-        default: name = "bubble-translucent_white.png"
+        default: name = "bubble-transluent_black.png"
         }
         return name
     }

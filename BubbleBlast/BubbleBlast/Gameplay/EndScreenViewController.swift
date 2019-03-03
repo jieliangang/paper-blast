@@ -17,7 +17,7 @@ class EndScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.layer.cornerRadius = 5.0
-        
+    
         switch result {
         case (true, .single):
             endScreenText.text = "You win!"

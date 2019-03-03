@@ -118,6 +118,18 @@ class GameViewController: UIViewController {
                                                name: Constants.NotificationName.noBubblesLeft, object: nil)
     }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if  segue.identifier == "endScreen" {
+            guard let childVC = segue.destination as? EndScreenViewController else {
+                fatalError("Error while setting EndScreenViewController")
+            }
+            guard let result = sender as? (Bool, PlayerType) else {
+                return
+            }
+            childVC.result = result
+        }
+    }
+
     // Shoot when tap
     @IBAction func tap(_ sender: UITapGestureRecognizer) {
         let tapLocation = sender.location(in: self.renderArea)
@@ -166,15 +178,6 @@ class GameViewController: UIViewController {
             currentPlayer.trajectory.setEnabled(false)
         default:
             return
-        }
-    }
-
-    @IBAction func swapButtonPressed(_ sender: UIButton) {
-        switch sender.tag {
-        case 0: playerSingle.swap()
-        case 1: playerOne.swap()
-        case 2: playerTwo.swap()
-        default: break
         }
     }
 
@@ -230,7 +233,7 @@ class GameViewController: UIViewController {
             selectedPlayer.pauseLoadedBubbles()
             if multiplayer && playerOne.numOfBubblesLeft == 0 && playerTwo.numOfBubblesLeft == 0 {
                 gameOverMultiPlayer(determineWinner())
-            } else if !multiplayer && noColoredBubblesLeft(){
+            } else if !multiplayer && noColoredBubblesLeft() {
                 gameOverSinglePlayer(win: true)
             } else if !multiplayer && !noColoredBubblesLeft() {
                 gameOverSinglePlayer(win: false)
@@ -238,29 +241,8 @@ class GameViewController: UIViewController {
         }
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if  segue.identifier == "endScreen" {
-            guard let childVC = segue.destination as? EndScreenViewController else {
-                fatalError("Error while setting EndScreenViewController")
-            }
-            guard let result = sender as? (Bool, PlayerType) else {
-                return
-            }
-            childVC.result = result
-        }
-    }
-
-    func gameOverSinglePlayer(win: Bool) {
-        performSegue(withIdentifier: "endScreen", sender: (win, PlayerType.single))
-    }
-
-    func gameOverMultiPlayer(_ winner: PlayerType) {
-        performSegue(withIdentifier: "endScreen", sender: (true, winner))
-        print("done")
-    }
-
-    func noColoredBubblesLeft() -> Bool {
-        return gameEngine.bubblesLeft.isEmpty
+    @IBAction func backButtonPressed(_ sender: UIButton) {
+        goBack()
     }
 
     private func setCannonDirection(_ location: CGPoint, playerId: PlayerType) {
@@ -282,6 +264,25 @@ class GameViewController: UIViewController {
         cannon.transform = transform
     }
 
+    private func initializeGameEngine() -> GameEngine {
+        let maxNumOfBubbles = game.isHexagonal ? Constants.Game.maxNumOfBubblesInHex
+            : Constants.Game.maxNumOfBubblesInRect
+        
+        var gridPositions = [Vector2]()
+        for item in 0..<maxNumOfBubbles {
+            guard let attribute = bubbleArea.layoutAttributesForItem(at: IndexPath(item: item, section: 0)) else {
+                break
+            }
+            gridPositions.append(Vector2(point: attribute.center))
+        }
+        
+        let gameEngine = GameEngine(minX: Double(0), maxX: Double(UIScreen.main.bounds.width),
+                                    minY: Double(0), maxY: Double(UIScreen.main.bounds.height),
+                                    gridPositions: gridPositions,
+                                    game: game, maxNumOfBubbles: maxNumOfBubbles)
+        return gameEngine
+    }
+
     private func setupPlayerMode() {
         if multiplayer {
             playerSingle.disable()
@@ -294,6 +295,7 @@ class GameViewController: UIViewController {
         }
     }
 
+    // Get player based on playerId
     private func player(_ playerId: PlayerType) -> Player {
         switch playerId {
         case .one: return playerOne
@@ -302,6 +304,7 @@ class GameViewController: UIViewController {
         }
     }
 
+    /// Update loaded bubbles if contains invalid/absent colored bubbles
     private func updateLoadedBubbles() {
         let set = gameEngine.bubblesLeft
         if multiplayer {
@@ -312,6 +315,7 @@ class GameViewController: UIViewController {
         }
     }
 
+    // Segregrate field based on player for multiplayer mode
     private func getPlayerBasedOn(location: CGPoint) -> PlayerType {
         if multiplayer {
             if location.x < inputArea.frame.midX {
@@ -371,7 +375,9 @@ class GameViewController: UIViewController {
 
     @objc
     private func reloadCellAt(_ notification: NSNotification) {
+        UIView.setAnimationsEnabled(false)
         bubbleArea.reloadData()
+        // Note: reloadItems is laggy for some unknown reason
         //bubbleArea.reloadItems(at: [IndexPath(item: index, section: 0)])
         updateLoadedBubbles()
     }
@@ -388,9 +394,11 @@ class GameViewController: UIViewController {
         let playerWhoPopped = player(playerId)
         playerWhoPopped.score.increment(value: score(type))
 
+        UIView.setAnimationsEnabled(true)
         bubbleArea.reloadData()
     }
-
+    
+    // Animation for moving cell to correct position
     @objc
     private func moveCell(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary? else {
@@ -413,11 +421,14 @@ class GameViewController: UIViewController {
             self.bubbleArea.reloadData()
         })
     }
-
-    @IBAction func backButtonPressed(_ sender: UIButton) {
-        goBack()
+    
+    // MARK: Game over handling
+    /// Check if no colored bubble is left in the field
+    func noColoredBubblesLeft() -> Bool {
+        return gameEngine.bubblesLeft.isEmpty
     }
 
+    /// Determine winner
     func determineWinner() -> PlayerType {
         if playerOne.score.endNumber > playerTwo.score.endNumber {
             return .one
@@ -426,6 +437,14 @@ class GameViewController: UIViewController {
         } else {
             return .bot
         }
+    }
+
+    private func gameOverSinglePlayer(win: Bool) {
+        performSegue(withIdentifier: "endScreen", sender: (win, PlayerType.single))
+    }
+
+    private func gameOverMultiPlayer(_ winner: PlayerType) {
+        performSegue(withIdentifier: "endScreen", sender: (true, winner))
     }
 
     @objc
@@ -442,9 +461,8 @@ class GameViewController: UIViewController {
         } else {
             gameOverMultiPlayer(loser.otherPlayer())
         }
-
     }
-    
+
     @objc private func noBubblesLeft(_ notification: NSNotification) {
         NotificationCenter.default.removeObserver(self, name: Constants.NotificationName.gameOver, object: nil)
         print(playerOne.score.endNumber)
@@ -458,25 +476,6 @@ class GameViewController: UIViewController {
         self.dismiss(animated: true, completion: {
             print("game dismissed")
         })
-    }
-
-    private func initializeGameEngine() -> GameEngine {
-        let maxNumOfBubbles = game.isHexagonal ? Constants.Game.maxNumOfBubblesInHex
-                                                      : Constants.Game.maxNumOfBubblesInRect
-
-        var gridPositions = [Vector2]()
-        for item in 0..<maxNumOfBubbles {
-            guard let attribute = bubbleArea.layoutAttributesForItem(at: IndexPath(item: item, section: 0)) else {
-                break
-            }
-            gridPositions.append(Vector2(point: attribute.center))
-        }
-
-        let gameEngine = GameEngine(minX: Double(0), maxX: Double(UIScreen.main.bounds.width),
-                                    minY: Double(0), maxY: Double(UIScreen.main.bounds.height),
-                                    gridPositions: gridPositions,
-                                    game: game, maxNumOfBubbles: maxNumOfBubbles)
-        return gameEngine
     }
 
     private func score(_ type: BubbleType) -> Float {
