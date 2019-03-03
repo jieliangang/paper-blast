@@ -36,6 +36,9 @@
 		D74FF5132226D02D00B3DDC5 /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF5112226D02D00B3DDC5 /* StorageError.swift */; };
 		D74FF5152226DAC200B3DDC5 /* LevelToPlaySegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74FF5142226DAC200B3DDC5 /* LevelToPlaySegue.swift */; };
 		D75D630A222B8D5300127319 /* TrajectoryPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75D6309222B8D5300127319 /* TrajectoryPath.swift */; };
+		D75D630C222BAEB600127319 /* UICountingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75D630B222BAEB600127319 /* UICountingLabel.swift */; };
+		D75D630E222BC68600127319 /* CounterLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75D630D222BC68600127319 /* CounterLabel.swift */; };
+		D75D6310222BE24700127319 /* EndScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75D630F222BE24700127319 /* EndScreenViewController.swift */; };
 		D7693E412225039B001762E4 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7693E402225039B001762E4 /* Queue.swift */; };
 		D794E50B2224F90E00F03BFE /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D794E50A2224F90E00F03BFE /* GameViewController.swift */; };
 		D794E50E2224F91F00F03BFE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D794E50D2224F91F00F03BFE /* Constants.swift */; };
@@ -80,6 +83,9 @@
 		D74FF5112226D02D00B3DDC5 /* StorageError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageError.swift; sourceTree = "<group>"; };
 		D74FF5142226DAC200B3DDC5 /* LevelToPlaySegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelToPlaySegue.swift; sourceTree = "<group>"; };
 		D75D6309222B8D5300127319 /* TrajectoryPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryPath.swift; sourceTree = "<group>"; };
+		D75D630B222BAEB600127319 /* UICountingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICountingLabel.swift; sourceTree = "<group>"; };
+		D75D630D222BC68600127319 /* CounterLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterLabel.swift; sourceTree = "<group>"; };
+		D75D630F222BE24700127319 /* EndScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndScreenViewController.swift; sourceTree = "<group>"; };
 		D7693E402225039B001762E4 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		D794E50A2224F90E00F03BFE /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		D794E50D2224F91F00F03BFE /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -228,6 +234,9 @@
 				D794E50F2224F92C00F03BFE /* GameEngine */,
 				D794E50A2224F90E00F03BFE /* GameViewController.swift */,
 				D75D6309222B8D5300127319 /* TrajectoryPath.swift */,
+				D75D630B222BAEB600127319 /* UICountingLabel.swift */,
+				D75D630D222BC68600127319 /* CounterLabel.swift */,
+				D75D630F222BE24700127319 /* EndScreenViewController.swift */,
 			);
 			path = Gameplay;
 			sourceTree = "<group>";
@@ -401,6 +410,7 @@
 			files = (
 				D74FF5132226D02D00B3DDC5 /* StorageError.swift in Sources */,
 				D74FF5092226CFE500B3DDC5 /* LevelDesignerViewController.swift in Sources */,
+				D75D6310222BE24700127319 /* EndScreenViewController.swift in Sources */,
 				D746C91C222A37A200CF743A /* LevelCell.swift in Sources */,
 				D746C90A2228F3E800CF743A /* SegmentedControlDelegate.swift in Sources */,
 				D794E5132224F92C00F03BFE /* GameEngine.swift in Sources */,
@@ -420,6 +430,7 @@
 				D794E5192224F93700F03BFE /* AlternatingBubbleLayout.swift in Sources */,
 				D74FF5002226CF8700B3DDC5 /* GameBubbleSet.swift in Sources */,
 				D794E51A2224F93700F03BFE /* BubbleCell.swift in Sources */,
+				D75D630E222BC68600127319 /* CounterLabel.swift in Sources */,
 				D74FF50A2226CFE500B3DDC5 /* BubbleGridViewController.swift in Sources */,
 				D794E50B2224F90E00F03BFE /* GameViewController.swift in Sources */,
 				D746C912222A26A300CF743A /* StartViewController.swift in Sources */,
@@ -430,6 +441,7 @@
 				D794E5142224F92C00F03BFE /* BubbleType.swift in Sources */,
 				D746C9082228540100CF743A /* RectangularGridLayout.swift in Sources */,
 				D746C91E222A3A3900CF743A /* LevelModel.swift in Sources */,
+				D75D630C222BAEB600127319 /* UICountingLabel.swift in Sources */,
 				D746C90E2229318900CF743A /* PlayerType.swift in Sources */,
 				D74FF4FF2226CF8700B3DDC5 /* ColorBubble.swift in Sources */,
 			);

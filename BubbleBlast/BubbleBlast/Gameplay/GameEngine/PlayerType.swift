@@ -13,4 +13,12 @@ import Foundation
  */
 enum PlayerType {
     case one, two, bot, single
+    
+    func otherPlayer() -> PlayerType {
+        switch self {
+        case .one: return .two
+        case .two: return .one
+        default: return self
+        }
+    }
 }

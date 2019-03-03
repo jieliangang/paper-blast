@@ -8,13 +8,6 @@
 
 import Foundation
 import UIKit
-//@IBOutlet var cannonSinglePlayer: UIImageView!
-//@IBOutlet var bubbleToShoot: UIImageView!
-//@IBOutlet var nextBubble: UIImageView!
-//@IBOutlet var secondNextBubble: UIImageView!
-//@IBOutlet var cannonBase: UIImageView!
-//@IBOutlet var tapSingle: UITapGestureRecognizer!
-//@IBOutlet var panSingle: UIPanGestureRecognizer!
 
 class Player {
     var mainView: UIView
@@ -44,10 +37,17 @@ class Player {
     let nextBubblePosition: CGPoint
     let secondNextBubblePosition: CGPoint
     var trajectory: TrajectoryPath
+    var score: UICountingLabel
+    var bubblesLeft: CounterLabel
+
+    var numOfBubblesLeft: Int {
+        return bubblesLeft.bubblesLeft
+    }
 
     init(mainView: UIView, cannon: UIImageView, bubbleToShoot: UIImageView, nextBubble: UIImageView,
          secondNextBubble: UIImageView, cannonBase: UIImageView, tapGestureRecognizer: UITapGestureRecognizer,
-         panGestureRecognizer: UIPanGestureRecognizer, trajectory: TrajectoryPath) {
+         panGestureRecognizer: UIPanGestureRecognizer, trajectory: TrajectoryPath, score: UICountingLabel,
+         bubblesLeft: CounterLabel) {
         self.mainView = mainView
         self.cannon = cannon
         self.bubbleToShoot = bubbleToShoot
@@ -64,19 +64,31 @@ class Player {
         self.secondNextBubblePosition = CGPoint(x: secondNextBubble.layer.position.x,
                                                 y: secondNextBubble.layer.position.y)
         self.trajectory = trajectory
+        self.score = score
+        self.bubblesLeft = bubblesLeft
         //drawCannon()
     }
-    
+
     func enable() {
         mainView.isHidden = false
         tapGestureRecognizer.isEnabled = true
         panGestureRecognizer.isEnabled = true
     }
-    
+
     func disable() {
         mainView.isHidden = true
         tapGestureRecognizer.isEnabled = false
         panGestureRecognizer.isEnabled = false
+    }
+
+    func swap() {
+        let tempType = currentBubbleType
+        currentBubbleType = nextBubbleType
+        nextBubbleType = tempType
+    }
+
+    func decrementBubble() {
+        bubblesLeft.decrement()
     }
 
      func drawCannon() {
@@ -113,24 +125,31 @@ class Player {
     }
 
     func loadBubble(nextType: BubbleType) {
-        canShoot = false
-        bubbleToShoot.image = nil
-        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations: {
-            self.nextBubble.layer.position = self.bubbleToShoot.layer.position
-            self.secondNextBubble.layer.position = self.nextBubblePosition
-        }, completion: { _ in
-            self.currentBubbleType = self.nextBubbleType
-            self.nextBubbleType = self.secondNextBubbleType
-            self.secondNextBubbleType = nextType
-            self.nextBubble.layer.position = self.nextBubblePosition
 
-            self.secondNextBubble.alpha = 0.0
-            self.secondNextBubble.layer.position = self.secondNextBubblePosition
-            UIView.animate(withDuration: 0.3, animations: {
-                self.secondNextBubble.alpha = 0.5
-            })
-            self.canShoot = true
-        })
+//        let next = CGPoint(x: nextBubble.center.x, y: nextBubble.center.y)
+//        let secondNext = CGPoint(x: secondNextBubble.center.x, y: secondNextBubble.center.y)
+
+//        canShoot = false
+//        bubbleToShoot.image = nil
+//        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations: {
+//            self.nextBubble.layer.position = self.bubbleToShoot.layer.position
+//            self.secondNextBubble.layer.position = next
+//        }, completion: { _ in
+//            self.currentBubbleType = self.nextBubbleType
+//            self.nextBubbleType = self.secondNextBubbleType
+//            self.secondNextBubbleType = nextType
+//            self.nextBubble.layer.position = next
+//
+//            self.secondNextBubble.alpha = 0.0
+//            self.secondNextBubble.layer.position = secondNext
+//            UIView.animate(withDuration: 0.3, animations: {
+//                self.secondNextBubble.alpha = 0.5
+//            })
+//            self.canShoot = true
+//        })
+        currentBubbleType = nextBubbleType
+        nextBubbleType = secondNextBubbleType
+        secondNextBubbleType = nextType
     }
 
     func updateLoadedBubbles(set: Set<BubbleType>) {
@@ -149,5 +168,11 @@ class Player {
         currentBubbleType = set.randomElement() ?? BubbleType.randomType()
         nextBubbleType = set.randomElement() ?? BubbleType.randomType()
         secondNextBubbleType = set.randomElement() ?? BubbleType.randomType()
+    }
+    
+    func pauseLoadedBubbles() {
+        currentBubbleType = .indestructible
+        nextBubbleType = .indestructible
+        secondNextBubbleType = .indestructible
     }
 }

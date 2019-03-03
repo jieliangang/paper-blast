@@ -26,6 +26,8 @@ class GameViewController: UIViewController {
     @IBOutlet private var tapSingle: UITapGestureRecognizer!
     @IBOutlet private var panSingle: UIPanGestureRecognizer!
     @IBOutlet private var trajectorySingle: TrajectoryPath!
+    @IBOutlet private var scoreSingle: UICountingLabel!
+    @IBOutlet private var bubblesLeftSingle: CounterLabel!
 
     @IBOutlet private var multiplayerOne: UIView!
     @IBOutlet private var cannonPlayerOne: UIImageView!
@@ -36,7 +38,9 @@ class GameViewController: UIViewController {
     @IBOutlet private var tapOne: UITapGestureRecognizer!
     @IBOutlet private var panOne: UIPanGestureRecognizer!
     @IBOutlet private var trajectoryOne: TrajectoryPath!
-    
+    @IBOutlet private var scoreOne: UICountingLabel!
+    @IBOutlet private var bubblesLeftOne: CounterLabel!
+
     @IBOutlet private var multiplayerTwo: UIView!
     @IBOutlet private var cannonPlayerTwo: UIImageView!
     @IBOutlet private var bubbleToShootPlayerTwo: UIImageView!
@@ -46,7 +50,9 @@ class GameViewController: UIViewController {
     @IBOutlet private var tapTwo: UITapGestureRecognizer!
     @IBOutlet private var panTwo: UIPanGestureRecognizer!
     @IBOutlet private var trajectoryTwo: TrajectoryPath!
-    
+    @IBOutlet private var scoreTwo: UICountingLabel!
+    @IBOutlet private var bubblesLeftTwo: CounterLabel!
+
     private var bubbleSize = UIScreen.main.bounds.width / CGFloat(Constants.Game.numOfBubblesInEvenRow)
     private lazy var gameEngine: GameEngine = initializeGameEngine()
     private var resourceImageManager: [BubbleType: UIImage] = [:]
@@ -56,22 +62,24 @@ class GameViewController: UIViewController {
                                             nextBubble: nextBubble, secondNextBubble: secondNextBubble,
                                             cannonBase: cannonBase,
                                             tapGestureRecognizer: tapSingle, panGestureRecognizer: panSingle,
-                                            trajectory: trajectorySingle)
+                                            trajectory: trajectorySingle, score: scoreSingle,
+                                            bubblesLeft: bubblesLeftSingle)
     private lazy var playerOne = Player(mainView: multiplayerOne, cannon: cannonPlayerOne,
                                         bubbleToShoot: bubbleToShootPlayerOne,
                                         nextBubble: nextBubblePlayerOne, secondNextBubble: secondNextBubblePlayerOne,
                                         cannonBase: cannonBasePlayerOne,
-                                        tapGestureRecognizer: tapOne, panGestureRecognizer: panOne, trajectory: trajectoryOne)
+                                        tapGestureRecognizer: tapOne, panGestureRecognizer: panOne,
+                                        trajectory: trajectoryOne, score: scoreOne, bubblesLeft: bubblesLeftOne)
     private lazy var playerTwo = Player(mainView: multiplayerTwo, cannon: cannonPlayerTwo,
                                         bubbleToShoot: bubbleToShootPlayerTwo,
                                         nextBubble: nextBubblePlayerTwo, secondNextBubble: secondNextBubblePlayerTwo,
                                         cannonBase: cannonBasePlayerTwo,
-                                        tapGestureRecognizer: tapTwo, panGestureRecognizer: panTwo, trajectory: trajectoryTwo)
+                                        tapGestureRecognizer: tapTwo, panGestureRecognizer: panTwo,
+                                        trajectory: trajectoryTwo, score: scoreTwo, bubblesLeft: bubblesLeftTwo)
     private var timer: Timer?
 
     var game = GameBubbleSet(numberOfRows: Constants.Game.numOfRows)
     var multiplayer = false
-    
     var panStarted = false
 
     override func viewDidLoad() {
@@ -104,6 +112,8 @@ class GameViewController: UIViewController {
                                                name: Constants.NotificationName.gameOver, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(moveCell(_:)),
                                                name: Constants.NotificationName.moveCell, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(popCell(_:)),
+                                               name: Constants.NotificationName.popCell, object: nil)
     }
 
     // Shoot when tap
@@ -157,6 +167,15 @@ class GameViewController: UIViewController {
         }
     }
 
+    @IBAction func swapButtonPressed(_ sender: UIButton) {
+        switch sender.tag {
+        case 0: playerSingle.swap()
+        case 1: playerOne.swap()
+        case 2: playerTwo.swap()
+        default: break
+        }
+    }
+
     /// Update game and rendering engine
     @objc private func update() {
         gameEngine.update()
@@ -191,6 +210,9 @@ class GameViewController: UIViewController {
         guard selectedPlayer.canShoot else {
             return
         }
+        guard selectedPlayer.numOfBubblesLeft > 0 else {
+            return
+        }
         let bubble = selectedPlayer.bubbleToShoot
         selectedPlayer.cannon.startAnimating()
         gameEngine.shootBubble(originLocation: CGPoint(x: bubble.frame.midX,
@@ -200,6 +222,34 @@ class GameViewController: UIViewController {
                                currentPlayBubbleType: selectedPlayer.currentBubbleType,
                                player: playerId)
         selectedPlayer.loadBubble(nextType: gameEngine.randomBubbleType())
+        selectedPlayer.decrementBubble()
+
+        if selectedPlayer.numOfBubblesLeft == 0 {
+            selectedPlayer.pauseLoadedBubbles()
+            if multiplayer && playerOne.numOfBubblesLeft == 0 && playerTwo.numOfBubblesLeft == 0 {
+                gameOverMultiPlayer(determineWinner())
+            } else if !multiplayer && noColoredBubblesLeft(){
+                gameOverSinglePlayer(win: true)
+            } else if !multiplayer && !noColoredBubblesLeft() {
+                gameOverSinglePlayer(win: false)
+            }
+        }
+    }
+    
+    func gameOverSinglePlayer(win: Bool) {
+        if win {
+            // won
+        } else {
+            // lose
+        }
+    }
+    
+    func gameOverMultiPlayer(_ winner: PlayerType) {
+        
+    }
+    
+    func noColoredBubblesLeft() -> Bool {
+        return gameEngine.bubblesLeft.isEmpty
     }
 
     private func setCannonDirection(_ location: CGPoint, playerId: PlayerType) {
@@ -310,15 +360,28 @@ class GameViewController: UIViewController {
 
     @objc
     private func reloadCellAt(_ notification: NSNotification) {
+        bubbleArea.reloadData()
+        //bubbleArea.reloadItems(at: [IndexPath(item: index, section: 0)])
+        updateLoadedBubbles()
+    }
+
+    @objc
+    private func popCell(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary? else {
             return
         }
-//        guard let index = dict["index"] as? Int else {
-//            return
-//        }
+        guard let type = dict["type"] as? BubbleType,
+            let playerId = dict["playerId"] as? PlayerType else {
+                return
+        }
+        let playerWhoPopped = player(playerId)
+        playerWhoPopped.score.increment(value: score(type))
+
         bubbleArea.reloadData()
-        //bubbleArea.reloadItems(at: [IndexPath(item: index, section: 0)])
-        //updateLoadedBubbles()
+
+        if gameEngine.bubblesLeft.isEmpty {
+            multiplayer ? gameOverMultiPlayer(determineWinner()) : gameOverSinglePlayer(win: true)
+        }
     }
 
     @objc
@@ -348,14 +411,29 @@ class GameViewController: UIViewController {
         goBack()
     }
 
+    func determineWinner() -> PlayerType {
+        if playerOne.score.endNumber > playerTwo.score.endNumber {
+            return .one
+        } else if playerOne.score.endNumber > playerTwo.score.endNumber {
+            return .two
+        } else {
+            return .bot
+        }
+    }
+
     @objc
     private func gameOver(_ notification: NSNotification) {
-        self.gameEngine.dropEverything()
-        let gameOverAlertController = UIAlertController(title: "Game Over!", message: nil, preferredStyle: .alert)
-        gameOverAlertController.addAction(UIAlertAction(title: "Restart", style: .cancel) { _  in
-            self.goBack()
-        })
-        self.present(gameOverAlertController, animated: true)
+        guard let dict = notification.userInfo as NSDictionary? else {
+            return
+        }
+        guard let loser = dict["loser"] as? PlayerType else {
+            return
+        }
+        if !multiplayer {
+            gameOverSinglePlayer(win: false)
+        } else {
+            gameOverMultiPlayer(loser.otherPlayer())
+        }
     }
 
     private func goBack() {
@@ -382,6 +460,17 @@ class GameViewController: UIViewController {
                                     gridPositions: gridPositions,
                                     game: game, maxNumOfBubbles: maxNumOfBubbles)
         return gameEngine
+    }
+
+    private func score(_ type: BubbleType) -> Float {
+        switch type {
+        case .colorRed, .colorYellow, .colorBlue, .colorGreen:
+            return 20
+        case .indestructible:
+            return 10
+        default:
+            return 0
+        }
     }
 }
 

@@ -18,7 +18,7 @@ class BubbleObject {
 
     let body: RigidBody
     var type: BubbleType
-    let player: PlayerType
+    var player: PlayerType
 
     init(type: BubbleType, position: Vector2, shape: Shape, player: PlayerType) {
         self.type = type

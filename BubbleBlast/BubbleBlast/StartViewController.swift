@@ -15,7 +15,13 @@ class StartViewController: UIViewController {
 
         // Do any additional setup after loading the view.
     }
-
+    @IBOutlet var counting: UICountingLabel!
+    
+    var counter: Float = 100
+    
+    @IBAction func button(_ sender: UIButton) {
+        counting.count(fromValue: counting.currentCounterValue, toValue: counting.endNumber + 100, withDuration: 1.0)
+    }
     /*
     // MARK: - Navigation
 

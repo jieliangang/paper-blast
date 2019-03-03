@@ -73,7 +73,7 @@ class GameEngine {
             physicsEngine.addStationaryBody(object.body)
             dictionary[ObjectIdentifier(object.body)] = object
         }
-        dropUnconnectedObjects()
+        dropUnconnectedObjects(player: .bot)
     }
 
     /// Update state of game and physics engine
@@ -159,32 +159,33 @@ extension GameEngine {
     /// Removes a stationary bubble object from the game grid and updates physics engine
     /// - Parameters:
     ///     - object: stationary bubble object to be removed
-    private func removeStationaryObject(_ index: Int) {
+    private func removeStationaryObject(_ index: Int, _ player: PlayerType) {
         guard let object = stationaryBubbleObjects[index] else {
             return
         }
-
+        object.player = player
         // Remove object
         self.stationaryBubbleObjects.removeValue(forKey: index)
         self.stationaryBubbleObjectsMap.removeValue(forKey: object)
         self.physicsEngine.removeStationaryBody(object.body)
         self.dictionary.removeValue(forKey: ObjectIdentifier(object.body))
-        self.reloadCellAt(index)
+        self.popCell(type: object.type, playerId: player)
 
         // Handle triggering of power bubbles
         switch object.type {
-        case .bomb: removeSurroundingBubbles(index)
-        case .lightning: removeRow(index)
+        case .bomb: removeSurroundingBubbles(index, player)
+        case .lightning: removeRow(index, player)
         default: break
         }
     }
 
     /// Drops a stationary bubble object from the game grid and updates physics engine
     /// - Parameter object: stationary bubble object to be dropped
-    private func dropStationaryObjectFromGrid(index: Int) {
+    private func dropStationaryObjectFromGrid(index: Int, player: PlayerType) {
         guard let object = stationaryBubbleObjects[index] else {
             return
         }
+        object.player = player
         stationaryBubbleObjects.removeValue(forKey: index)
         stationaryBubbleObjectsMap.removeValue(forKey: object)
         droppingBubbleObjects.insert(object)
@@ -200,10 +201,17 @@ extension GameEngine {
         NotificationCenter.default.post(name: reloadCellNotification, object: nil, userInfo: ["index": index])
     }
 
+    /// Send notification to controller to reload cell in bubble collection view
+    private func popCell(type: BubbleType, playerId: PlayerType) {
+        NotificationCenter.default.post(name: Constants.NotificationName.popCell,
+                                        object: nil, userInfo: ["type": type, "playerId": playerId])
+    }
+
     /// Clear all stationary bubbles and send notification to controller to inform game over
-    private func gameOver() {
+    private func gameOver(_ loser: PlayerType) {
         dropEverything()
-        NotificationCenter.default.post(name: NSNotification.Name("gameOver"), object: nil, userInfo: nil)
+
+        NotificationCenter.default.post(name: NSNotification.Name("gameOver"), object: nil, userInfo: ["loser": loser])
     }
 
     private func moveCell(_ center: CGPoint, _ type: BubbleType, _ final: CGPoint) {
@@ -217,68 +225,68 @@ extension GameEngine {
     /// Remove identically-colored and connected bubbles from root bubble
     /// if group of bubbles exceed certain amount
     /// - Parameter index: index of root bubble
-    private func removeAdjacentSimilarColorBubbles(of index: Int) {
+    private func removeAdjacentSimilarColorBubbles(of index: Int, _ player: PlayerType) {
         let similarGroupIndices = getAdjacentSimilarColorBubbles(of: index)
         guard similarGroupIndices.count >= Constants.Game.numOfBubblesToPop else {
             return
         }
         for index in similarGroupIndices {
-            removeStationaryObject(index)
+            removeStationaryObject(index, player)
         }
     }
 
     /// Drops unconnected bubbles from the top wall
-    private func dropUnconnectedObjects() {
+    private func dropUnconnectedObjects(player: PlayerType) {
         let attachedObjects = findAttachedBubbles()
         for index in stationaryBubbleObjects.keys where !attachedObjects.contains(index) {
-            dropStationaryObjectFromGrid(index: index)
+            dropStationaryObjectFromGrid(index: index, player: player)
         }
     }
 
     /// Drop all connected/stationary bubbles in the game
     func dropEverything() {
         for index in stationaryBubbleObjects.keys {
-            dropStationaryObjectFromGrid(index: index)
+            dropStationaryObjectFromGrid(index: index, player: .bot)
         }
     }
 }
 
 // MARK: Powers
 extension GameEngine {
-    private func handlePowerBubbles(around index: Int, of type: BubbleType) {
+    private func handlePowerBubbles(around index: Int, of type: BubbleType, _ player: PlayerType) {
         for neighborIndex in neighbor(of: index) {
             guard let bubble = stationaryBubbleObjects[neighborIndex] else {
                 continue
             }
             switch bubble.type {
             case .bomb, .lightning:
-                removeStationaryObject(neighborIndex)
+                removeStationaryObject(neighborIndex, player)
             case .star:
-                removeStationaryObject(neighborIndex)
-                removeAllBubblesOfType(type)
+                removeStationaryObject(neighborIndex, player)
+                removeAllBubblesOfType(type, player)
             default:
                 continue
             }
         }
     }
 
-    private func removeAllBubblesOfType(_ typeToRemove: BubbleType) {
+    private func removeAllBubblesOfType(_ typeToRemove: BubbleType, _ player: PlayerType) {
         for (index, bubble) in stationaryBubbleObjects where bubble.type == typeToRemove {
-            removeStationaryObject(index)
+            removeStationaryObject(index, player)
         }
     }
 
-    private func removeRow(_ index: Int) {
+    private func removeRow(_ index: Int, _ player: PlayerType) {
         let (firstInRow, lastInRow) = getFirstAndLastIndiceInRowOf(index)
 
         for index in firstInRow...lastInRow {
-            removeStationaryObject(index)
+            removeStationaryObject(index, player)
         }
     }
 
-    private func removeSurroundingBubbles(_ index: Int) {
+    private func removeSurroundingBubbles(_ index: Int, _ player: PlayerType) {
         for neighborIndex in neighbor(of: index) {
-            removeStationaryObject(neighborIndex)
+            removeStationaryObject(neighborIndex, player)
         }
     }
 }
@@ -468,9 +476,9 @@ extension GameEngine {
             }
         case .bottom:
             // remove moving object when reached bottom of screen
-            self.movingBubbleObjects.remove(object)
-            self.physicsEngine.removeMovingBody(object.body)
-            self.dictionary.removeValue(forKey: ObjectIdentifier(object.body))
+            movingBubbleObjects.remove(object)
+            physicsEngine.removeMovingBody(object.body)
+            dictionary.removeValue(forKey: ObjectIdentifier(object.body))
         case .left, .right:
             resolveBoundCollisionBetween(body: body, wall: wall)
         }
@@ -484,9 +492,12 @@ extension GameEngine {
         switch wall {
         case .bottom:
             // remove dropping object when reached bottom of screen
-            self.droppingBubbleObjects.remove(object)
-            self.physicsEngine.removeDroppingBody(object.body)
-            self.dictionary.removeValue(forKey: ObjectIdentifier(object.body))
+            droppingBubbleObjects.remove(object)
+            physicsEngine.removeDroppingBody(object.body)
+            dictionary.removeValue(forKey: ObjectIdentifier(object.body))
+            popCell(type: object.type, playerId: object.player)
+            
+        
         case .top, .left, .right:
             resolveBoundCollisionBetween(body: body, wall: wall)
         }
@@ -512,6 +523,7 @@ extension GameEngine {
     }
 
     private func connectObject(_ object: BubbleObject, to index: Int) {
+        let player = object.player
         switch object.body.shape {
         case Shape.circle(radius: let radius):
             self.insertStationaryBubble(radius: radius,
@@ -525,13 +537,13 @@ extension GameEngine {
             self.removeMovingObject(object)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300), execute: {
-            self.removeAdjacentSimilarColorBubbles(of: index)
-            self.handlePowerBubbles(around: index, of: object.type)
-            self.dropUnconnectedObjects()
+            self.removeAdjacentSimilarColorBubbles(of: index, player)
+            self.handlePowerBubbles(around: index, of: object.type, player)
+            self.dropUnconnectedObjects(player: player)
 
             // Detect for game over
             if self.detectGameOver(index: index) {
-                self.gameOver()
+                self.gameOver(player)
             }
         })
     }

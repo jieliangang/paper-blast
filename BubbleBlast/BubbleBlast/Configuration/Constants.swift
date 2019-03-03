@@ -41,5 +41,9 @@ struct Constants {
         static let reloadCell = Notification.Name("reloadCell")
         static let gameOver = Notification.Name("gameOver")
         static let moveCell = Notification.Name("moveCell")
+
+        static let popCell = Notification.Name("popCell")
+        static let addCell = Notification.Name("addCell")
+        static let removeDropCell = Notification.Name("removeDropCell")
     }
 }
