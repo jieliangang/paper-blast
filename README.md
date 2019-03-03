@@ -1,11 +1,11 @@
 CS3217 Problem Set 5
 ==
 
-**Name:** Your name
+**Name:** Ang Jie Liang
 
-**Matric No:** Your matric no
+**Matric No:** A0149293W
 
-**Tutor:** Your tutor's name
+**Tutor:** Ang Jie Liang
 
 ## Tips
 
@@ -16,16 +16,26 @@ CS3217 Problem Set 5
 
 ### Rules of Your Game
 
-Your answer here
+
 
 
 ### Problem 1: Cannon Direction
 
-Your answer here
+**Single Player**
+Tap to shoot bubble.
+Pan to aim, and release to shoot bubble.
+
+**Multiplayer**
+**Player 1**
+Tap at left side of screen to shoot bubble.
+Pan at left side of screen to aim, and release at left side of screen to shoot bubble. Panning to area beyond left screen cancels aim.
+**Player 2**
+Tap at right side of screen to shoot bubble.
+Pan at right side of screen to aim, and release at right side of screen to shoot bubble. Panning to area beyond right screen cancels aim.
 
 ### Problem 2: Upcoming Bubbles
 
-Your answer here
+Upcoming bubbles will be a random colored bubble of **ONLY** the **present stationary colored bubbles** in the game. If any upcoming bubbles happened to be of a color which is removed from the game, the bubble will be updated to a suitable color, which is the color present in the game.
 
 ### Problem 3: Integration
 

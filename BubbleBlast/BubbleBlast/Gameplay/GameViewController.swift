@@ -25,6 +25,7 @@ class GameViewController: UIViewController {
     @IBOutlet private var cannonBase: UIImageView!
     @IBOutlet private var tapSingle: UITapGestureRecognizer!
     @IBOutlet private var panSingle: UIPanGestureRecognizer!
+    @IBOutlet private var trajectorySingle: TrajectoryPath!
 
     @IBOutlet private var multiplayerOne: UIView!
     @IBOutlet private var cannonPlayerOne: UIImageView!
@@ -34,7 +35,8 @@ class GameViewController: UIViewController {
     @IBOutlet private var cannonBasePlayerOne: UIImageView!
     @IBOutlet private var tapOne: UITapGestureRecognizer!
     @IBOutlet private var panOne: UIPanGestureRecognizer!
-
+    @IBOutlet private var trajectoryOne: TrajectoryPath!
+    
     @IBOutlet private var multiplayerTwo: UIView!
     @IBOutlet private var cannonPlayerTwo: UIImageView!
     @IBOutlet private var bubbleToShootPlayerTwo: UIImageView!
@@ -43,7 +45,8 @@ class GameViewController: UIViewController {
     @IBOutlet private var cannonBasePlayerTwo: UIImageView!
     @IBOutlet private var tapTwo: UITapGestureRecognizer!
     @IBOutlet private var panTwo: UIPanGestureRecognizer!
-
+    @IBOutlet private var trajectoryTwo: TrajectoryPath!
+    
     private var bubbleSize = UIScreen.main.bounds.width / CGFloat(Constants.Game.numOfBubblesInEvenRow)
     private lazy var gameEngine: GameEngine = initializeGameEngine()
     private var resourceImageManager: [BubbleType: UIImage] = [:]
@@ -52,21 +55,24 @@ class GameViewController: UIViewController {
                                            bubbleToShoot: bubbleToShoot,
                                             nextBubble: nextBubble, secondNextBubble: secondNextBubble,
                                             cannonBase: cannonBase,
-                                            tapGestureRecognizer: tapSingle, panGestureRecognizer: panSingle)
+                                            tapGestureRecognizer: tapSingle, panGestureRecognizer: panSingle,
+                                            trajectory: trajectorySingle)
     private lazy var playerOne = Player(mainView: multiplayerOne, cannon: cannonPlayerOne,
                                         bubbleToShoot: bubbleToShootPlayerOne,
                                         nextBubble: nextBubblePlayerOne, secondNextBubble: secondNextBubblePlayerOne,
                                         cannonBase: cannonBasePlayerOne,
-                                        tapGestureRecognizer: tapOne, panGestureRecognizer: panOne)
+                                        tapGestureRecognizer: tapOne, panGestureRecognizer: panOne, trajectory: trajectoryOne)
     private lazy var playerTwo = Player(mainView: multiplayerTwo, cannon: cannonPlayerTwo,
                                         bubbleToShoot: bubbleToShootPlayerTwo,
                                         nextBubble: nextBubblePlayerTwo, secondNextBubble: secondNextBubblePlayerTwo,
                                         cannonBase: cannonBasePlayerTwo,
-                                        tapGestureRecognizer: tapTwo, panGestureRecognizer: panTwo)
+                                        tapGestureRecognizer: tapTwo, panGestureRecognizer: panTwo, trajectory: trajectoryTwo)
     private var timer: Timer?
 
     var game = GameBubbleSet(numberOfRows: Constants.Game.numOfRows)
     var multiplayer = false
+    
+    var panStarted = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,6 +86,7 @@ class GameViewController: UIViewController {
         // Set up game
         setupPlayerMode()
         drawCannon()
+        trajectorySingle.setRadius(bubbleSize / 2)
 
         // Set up game loop
         timer = Timer.scheduledTimer(timeInterval: Constants.Game.fps, target: self,
@@ -112,21 +119,39 @@ class GameViewController: UIViewController {
 
     // Shoot when release after panning
     @IBAction func pan(_ sender: UIPanGestureRecognizer) {
+        let currentPlayer: Player
+        switch sender {
+        case panOne: currentPlayer = playerOne
+        case panTwo: currentPlayer = playerTwo
+        case panSingle: currentPlayer = playerSingle
+        default: return
+        }
+
         let location = sender.location(in: self.renderArea)
         guard location.y < bubbleToShoot.frame.minY else {
+            currentPlayer.trajectory.setEnabled(false)
             return
         }
         if ((sender == panOne) && location.x > renderArea.frame.midX) ||
             ((sender == panTwo) && location.x < renderArea.frame.midX) {
+            currentPlayer.trajectory.setEnabled(false)
             return
         }
+        let playerId = getPlayerBasedOn(location: location)
         switch sender.state {
-        case .began, .changed:
-            let player = getPlayerBasedOn(location: location)
-            setCannonDirection(location, playerId: player)
+        case .began:
+            setCannonDirection(location, playerId: playerId)
+            currentPlayer.trajectory.setColor(ResourceManager.color(of: currentPlayer.currentBubbleType))
+            currentPlayer.trajectory.setStartPoint(currentPlayer.bubbleToShoot.center)
+            currentPlayer.trajectory.setEndPoint(location)
+            currentPlayer.trajectory.setEnabled(true)
+        case .changed:
+            setCannonDirection(location, playerId: playerId)
+            currentPlayer.trajectory.setEndPoint(location)
+            currentPlayer.trajectory.setEnabled(true)
         case .ended:
-            let player = getPlayerBasedOn(location: location)
-            shootBubble(location, playerId: player)
+            shootBubble(location, playerId: playerId)
+            currentPlayer.trajectory.setEnabled(false)
         default:
             return
         }
@@ -198,18 +223,12 @@ class GameViewController: UIViewController {
 
     private func setupPlayerMode() {
         if multiplayer {
-            singlePlayer.isHidden = true
-            tapSingle.isEnabled = false
-            panSingle.isEnabled = false
+            playerSingle.disable()
             playerOne.resetLoadedBubbles(set: game.bubblesLeft)
             playerTwo.resetLoadedBubbles(set: game.bubblesLeft)
         } else {
-            multiplayerOne.isHidden = true
-            multiplayerTwo.isHidden = true
-            tapOne.isEnabled = false
-            tapTwo.isEnabled = false
-            panOne.isEnabled = false
-            panTwo.isEnabled = false
+            playerOne.disable()
+            playerTwo.disable()
             playerSingle.resetLoadedBubbles(set: game.bubblesLeft)
         }
     }

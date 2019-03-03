@@ -28,4 +28,14 @@ class ResourceManager {
     static func imageView(of type: BubbleType) -> UIImage? {
         return UIImage(named: imageName(of: type))
     }
+    
+    static func color(of type: BubbleType) -> UIColor {
+        switch type {
+        case .colorRed: return .red
+        case .colorBlue: return .blue
+        case .colorGreen: return .green
+        case .colorYellow: return .yellow
+        default: return .black
+        }
+    }
 }

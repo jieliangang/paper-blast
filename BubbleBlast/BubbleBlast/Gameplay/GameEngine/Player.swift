@@ -43,10 +43,11 @@ class Player {
     var canShoot = true
     let nextBubblePosition: CGPoint
     let secondNextBubblePosition: CGPoint
+    var trajectory: TrajectoryPath
 
     init(mainView: UIView, cannon: UIImageView, bubbleToShoot: UIImageView, nextBubble: UIImageView,
          secondNextBubble: UIImageView, cannonBase: UIImageView, tapGestureRecognizer: UITapGestureRecognizer,
-         panGestureRecognizer: UIPanGestureRecognizer) {
+         panGestureRecognizer: UIPanGestureRecognizer, trajectory: TrajectoryPath) {
         self.mainView = mainView
         self.cannon = cannon
         self.bubbleToShoot = bubbleToShoot
@@ -62,7 +63,20 @@ class Player {
                                           y: nextBubble.layer.position.y)
         self.secondNextBubblePosition = CGPoint(x: secondNextBubble.layer.position.x,
                                                 y: secondNextBubble.layer.position.y)
+        self.trajectory = trajectory
         //drawCannon()
+    }
+    
+    func enable() {
+        mainView.isHidden = false
+        tapGestureRecognizer.isEnabled = true
+        panGestureRecognizer.isEnabled = true
+    }
+    
+    func disable() {
+        mainView.isHidden = true
+        tapGestureRecognizer.isEnabled = false
+        panGestureRecognizer.isEnabled = false
     }
 
      func drawCannon() {
