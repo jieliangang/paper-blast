@@ -213,6 +213,11 @@ extension GameEngine {
 
         NotificationCenter.default.post(name: NSNotification.Name("gameOver"), object: nil, userInfo: ["loser": loser])
     }
+    
+    private func noBubblesLeft() {
+        dropEverything()
+        NotificationCenter.default.post(name: NSNotification.Name("noBubblesLeft"), object: nil)
+    }
 
     private func moveCell(_ center: CGPoint, _ type: BubbleType, _ final: CGPoint) {
         NotificationCenter.default.post(name: moveCellNotification, object: nil,
@@ -544,6 +549,8 @@ extension GameEngine {
             // Detect for game over
             if self.detectGameOver(index: index) {
                 self.gameOver(player)
+            } else if self.bubblesLeft.isEmpty {
+                self.noBubblesLeft()
             }
         })
     }

@@ -15,21 +15,4 @@ class StartViewController: UIViewController {
 
         // Do any additional setup after loading the view.
     }
-    @IBOutlet var counting: UICountingLabel!
-    
-    var counter: Float = 100
-    
-    @IBAction func button(_ sender: UIButton) {
-        counting.count(fromValue: counting.currentCounterValue, toValue: counting.endNumber + 100, withDuration: 1.0)
-    }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

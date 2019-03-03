@@ -114,6 +114,8 @@ class GameViewController: UIViewController {
                                                name: Constants.NotificationName.moveCell, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(popCell(_:)),
                                                name: Constants.NotificationName.popCell, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(noBubblesLeft(_:)),
+                                               name: Constants.NotificationName.noBubblesLeft, object: nil)
     }
 
     // Shoot when tap
@@ -235,19 +237,28 @@ class GameViewController: UIViewController {
             }
         }
     }
-    
-    func gameOverSinglePlayer(win: Bool) {
-        if win {
-            // won
-        } else {
-            // lose
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if  segue.identifier == "endScreen" {
+            guard let childVC = segue.destination as? EndScreenViewController else {
+                fatalError("Error while setting EndScreenViewController")
+            }
+            guard let result = sender as? (Bool, PlayerType) else {
+                return
+            }
+            childVC.result = result
         }
     }
-    
-    func gameOverMultiPlayer(_ winner: PlayerType) {
-        
+
+    func gameOverSinglePlayer(win: Bool) {
+        performSegue(withIdentifier: "endScreen", sender: (win, PlayerType.single))
     }
-    
+
+    func gameOverMultiPlayer(_ winner: PlayerType) {
+        performSegue(withIdentifier: "endScreen", sender: (true, winner))
+        print("done")
+    }
+
     func noColoredBubblesLeft() -> Bool {
         return gameEngine.bubblesLeft.isEmpty
     }
@@ -378,10 +389,6 @@ class GameViewController: UIViewController {
         playerWhoPopped.score.increment(value: score(type))
 
         bubbleArea.reloadData()
-
-        if gameEngine.bubblesLeft.isEmpty {
-            multiplayer ? gameOverMultiPlayer(determineWinner()) : gameOverSinglePlayer(win: true)
-        }
     }
 
     @objc
@@ -414,7 +421,7 @@ class GameViewController: UIViewController {
     func determineWinner() -> PlayerType {
         if playerOne.score.endNumber > playerTwo.score.endNumber {
             return .one
-        } else if playerOne.score.endNumber > playerTwo.score.endNumber {
+        } else if playerOne.score.endNumber < playerTwo.score.endNumber {
             return .two
         } else {
             return .bot
@@ -429,11 +436,21 @@ class GameViewController: UIViewController {
         guard let loser = dict["loser"] as? PlayerType else {
             return
         }
+        NotificationCenter.default.removeObserver(self, name: Constants.NotificationName.gameOver, object: nil)
         if !multiplayer {
             gameOverSinglePlayer(win: false)
         } else {
             gameOverMultiPlayer(loser.otherPlayer())
         }
+
+    }
+    
+    @objc private func noBubblesLeft(_ notification: NSNotification) {
+        NotificationCenter.default.removeObserver(self, name: Constants.NotificationName.gameOver, object: nil)
+        print(playerOne.score.endNumber)
+        print(playerTwo.score.endNumber)
+        multiplayer ? gameOverMultiPlayer(determineWinner()) : gameOverSinglePlayer(win: true)
+        NotificationCenter.default.removeObserver(self, name: Constants.NotificationName.noBubblesLeft, object: nil)
     }
 
     private func goBack() {

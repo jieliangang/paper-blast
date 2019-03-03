@@ -45,5 +45,6 @@ struct Constants {
         static let popCell = Notification.Name("popCell")
         static let addCell = Notification.Name("addCell")
         static let removeDropCell = Notification.Name("removeDropCell")
+        static let noBubblesLeft = Notification.Name("noBubblesLeft")
     }
 }

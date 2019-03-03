@@ -10,21 +10,33 @@ import UIKit
 
 class EndScreenViewController: UIViewController {
 
+    @IBOutlet var endScreenText: UILabel!
+
+    var result: (Bool, PlayerType) = (false, .single)
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.layer.cornerRadius = 5.0
+        
+        switch result {
+        case (true, .single):
+            endScreenText.text = "You win!"
+        case (true, .one), (false, .two):
+            endScreenText.text = "Player One win!"
+        case (true, .two), (false, .one):
+            endScreenText.text = "Player Two win!"
+        case (false, .single):
+            endScreenText.text = "You lose!"
+        case (_ , .bot):
+            endScreenText.text = "Draw!"
+        default:
+            break
+        }
 
-        // Do any additional setup after loading the view.
+    }
+
+    @IBAction func back(_ sender: UIButton) {
+        self.presentingViewController?.presentingViewController?.dismiss(animated: false, completion: nil)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
