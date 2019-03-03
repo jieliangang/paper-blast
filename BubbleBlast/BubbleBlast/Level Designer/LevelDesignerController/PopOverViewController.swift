@@ -16,7 +16,7 @@ class PopOverViewController: UITableViewController {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "dataCell")
         tableView.rowHeight = 50
-        self.preferredContentSize = CGSize(width: 300, height: tableView.rowHeight * 5)
+        self.preferredContentSize = CGSize(width: 300, height: tableView.rowHeight * 4)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {

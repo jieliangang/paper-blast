@@ -8,16 +8,13 @@
 
 import Foundation
 /**
- `SpecialBubble` represents an empty `GameBubble`
+ `SpecialBubble` represents a special power `GameBubble`
  */
 class SpecialBubble: GameBubble, Codable {
     var type: BubbleType
 
-    private let typeArray = [BubbleType.indestructible, BubbleType.lightning,
-                             BubbleType.bomb, BubbleType.star]
-
     init?(type: BubbleType) {
-        guard typeArray.contains(type) else {
+        guard Constants.Game.powerTypes.contains(type) else {
             return nil
         }
         self.type = type
@@ -25,6 +22,6 @@ class SpecialBubble: GameBubble, Codable {
     }
 
     private func checkRep() -> Bool {
-        return typeArray.contains(type)
+        return Constants.Game.powerTypes.contains(type)
     }
 }

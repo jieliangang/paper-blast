@@ -30,6 +30,8 @@ struct Constants {
                            yComponent: Double.random(in: -150...(-100)))
         }
         static let cannonAnimationTime = 1/4
+        static let colorTypes = [BubbleType.colorBlue, BubbleType.colorRed, BubbleType.colorGreen, BubbleType.colorYellow]
+        static let powerTypes = [BubbleType.bomb, .lightning, .star]
     }
     struct LevelDesigner {
         static let numOfRows = 12

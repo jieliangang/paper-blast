@@ -149,15 +149,14 @@ extension BubbleGridViewController {
                 return BubbleCell()
         }
         if let bubble = game.bubble(at: indexPath.item) {
-            cell.setImage(UIImage(named: ResourceManager.imageName(of: bubble.type)))
+            cell.setImage(ResourceManager.imageView(of: bubble.type))
         }
         return cell
     }
 }
 
+// Get screenshot of collection view
 extension UIView {
-    // Using a function since `var image` might conflict with an existing variable
-    // (like on `UIImageView`)
     func getImage() -> UIImage {
         if #available(iOS 10.0, *) {
             let renderer = UIGraphicsImageRenderer(bounds: bounds)

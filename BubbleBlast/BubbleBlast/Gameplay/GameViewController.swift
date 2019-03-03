@@ -286,12 +286,12 @@ class GameViewController: UIViewController {
     private func setupPlayerMode() {
         if multiplayer {
             playerSingle.disable()
-            playerOne.resetLoadedBubbles(set: game.bubblesLeft)
-            playerTwo.resetLoadedBubbles(set: game.bubblesLeft)
+            playerOne.resetLoadedBubbles(set: game.typesLeft)
+            playerTwo.resetLoadedBubbles(set: game.typesLeft)
         } else {
             playerOne.disable()
             playerTwo.disable()
-            playerSingle.resetLoadedBubbles(set: game.bubblesLeft)
+            playerSingle.resetLoadedBubbles(set: game.typesLeft)
         }
     }
 

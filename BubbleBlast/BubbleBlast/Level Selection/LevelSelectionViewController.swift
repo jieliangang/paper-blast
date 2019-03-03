@@ -19,18 +19,14 @@ class LevelSelectionViewController: UIViewController {
         super.viewDidLoad()
         levels.dataSource = self
         levels.delegate = self
-
-        // Do any additional setup after loading the view.
     }
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if  segue.identifier == "selectToPlay" {
             guard let childVC = segue.destination as? GameViewController else {
                 fatalError("Error while setting GameViewController")
             }
             guard let index = levels.indexPathsForSelectedItems?.first?.item else {
-                print("no selected item")
                 return
             }
             let fileName = levelData[index]
@@ -39,10 +35,11 @@ class LevelSelectionViewController: UIViewController {
                 childVC.game = game
                 childVC.multiplayer = multiplayer
             } catch {
-                print("couldn't retreive game data")
+                print("Couldn't retreive game data")
             }
         }
     }
+
     @IBAction func backButtonPressed(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
     }
@@ -82,7 +79,7 @@ extension LevelSelectionViewController: UICollectionViewDataSource, UICollection
         cell.layer.shadowColor = UIColor.black.cgColor
         cell.layer.shadowOffset = CGSize(width: 5.0, height: 5.0)
         cell.layer.shadowRadius = cell.frame.width / 20
-        cell.layer.shadowOpacity = 0.1
+        cell.layer.shadowOpacity = 0.2
         cell.layer.masksToBounds = false
         cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds,
                                              cornerRadius: cell.contentView.layer.cornerRadius).cgPath

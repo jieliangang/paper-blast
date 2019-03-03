@@ -38,9 +38,7 @@ class LevelDesignerViewController: UIViewController {
     }
 
     @IBAction func backButtonPressed(_ sender: UIButton) {
-        dismiss(animated: true) {
-            print("dismissed")
-        }
+        dismiss(animated: true, completion: nil)
     }
 
     @IBAction func gridToggled(_ sender: UISegmentedControl) {

@@ -14,7 +14,6 @@ import UIKit
  */
 class GameBubbleSet: Codable {
     private var bubbles = [GameBubble]()
-
     private(set) var isHexagonal = true
 
     /// Creates a hexagonal `GameBubbleSet` with all bubbles set to `EmptyBubble`
@@ -86,6 +85,15 @@ class GameBubbleSet: Codable {
     var bubbleTypes: [BubbleType] {
         return bubbles.map { $0.type }
     }
+    
+    /// Update model when alternating between layouts
+    func updateGridLayout(toHex: Bool) {
+        guard isHexagonal != toHex else {
+            return
+        }
+        isHexagonal = toHex
+        isHexagonal ? removePadding() : addPadding()
+    }
 
     /// Add padding bubbles
     private func addPadding() {
@@ -105,15 +113,8 @@ class GameBubbleSet: Codable {
         }
     }
 
-    func updateGridLayout(toHex: Bool) {
-        guard isHexagonal != toHex else {
-            return
-        }
-        isHexagonal = toHex
-        isHexagonal ? removePadding() : addPadding()
-    }
-
-    var bubblesLeft: Set<BubbleType> {
+    /// Returns bubble types left on the grid
+    var typesLeft: Set<BubbleType> {
         return Set(bubbles.map { $0.type }
                           .filter { $0.isColor()})
     }
