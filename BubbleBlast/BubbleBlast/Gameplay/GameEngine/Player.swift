@@ -169,7 +169,7 @@ class Player {
         nextBubbleType = set.randomElement() ?? BubbleType.randomType()
         secondNextBubbleType = set.randomElement() ?? BubbleType.randomType()
     }
-    
+
     func pauseLoadedBubbles() {
         currentBubbleType = .indestructible
         nextBubbleType = .indestructible

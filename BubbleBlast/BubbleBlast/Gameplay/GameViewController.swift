@@ -267,7 +267,7 @@ class GameViewController: UIViewController {
     private func initializeGameEngine() -> GameEngine {
         let maxNumOfBubbles = game.isHexagonal ? Constants.Game.maxNumOfBubblesInHex
             : Constants.Game.maxNumOfBubblesInRect
-        
+
         var gridPositions = [Vector2]()
         for item in 0..<maxNumOfBubbles {
             guard let attribute = bubbleArea.layoutAttributesForItem(at: IndexPath(item: item, section: 0)) else {
@@ -275,7 +275,7 @@ class GameViewController: UIViewController {
             }
             gridPositions.append(Vector2(point: attribute.center))
         }
-        
+
         let gameEngine = GameEngine(minX: Double(0), maxX: Double(UIScreen.main.bounds.width),
                                     minY: Double(0), maxY: Double(UIScreen.main.bounds.height),
                                     gridPositions: gridPositions,
@@ -397,7 +397,7 @@ class GameViewController: UIViewController {
         UIView.setAnimationsEnabled(true)
         bubbleArea.reloadData()
     }
-    
+
     // Animation for moving cell to correct position
     @objc
     private func moveCell(_ notification: NSNotification) {
@@ -418,10 +418,11 @@ class GameViewController: UIViewController {
             imageView.center = final
         }, completion: { _ in
             imageView.removeFromSuperview()
+            UIView.setAnimationsEnabled(true)
             self.bubbleArea.reloadData()
         })
     }
-    
+
     // MARK: Game over handling
     /// Check if no colored bubble is left in the field
     func noColoredBubblesLeft() -> Bool {

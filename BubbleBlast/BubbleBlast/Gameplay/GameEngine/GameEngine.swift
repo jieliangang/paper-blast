@@ -213,7 +213,7 @@ extension GameEngine {
 
         NotificationCenter.default.post(name: NSNotification.Name("gameOver"), object: nil, userInfo: ["loser": loser])
     }
-    
+
     private func noBubblesLeft() {
         dropEverything()
         NotificationCenter.default.post(name: NSNotification.Name("noBubblesLeft"), object: nil)
@@ -501,8 +501,7 @@ extension GameEngine {
             physicsEngine.removeDroppingBody(object.body)
             dictionary.removeValue(forKey: ObjectIdentifier(object.body))
             popCell(type: object.type, playerId: object.player)
-            
-        
+
         case .top, .left, .right:
             resolveBoundCollisionBetween(body: body, wall: wall)
         }

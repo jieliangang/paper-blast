@@ -39,12 +39,13 @@ class UICountingLabel: UILabel {
         case easeOut
     }
 
+    // Linear for this game
     let counterAnimationType = CounterAnimationType.linear
 
     func increment(value: Float) {
         count(fromValue: currentCounterValue, toValue: endNumber + value, withDuration: 0.7)
     }
-    
+
     func decrementByOne() {
         count(fromValue: currentCounterValue, toValue: endNumber - 1, withDuration: 0.1)
     }
@@ -91,5 +92,4 @@ class UICountingLabel: UILabel {
         }
         updateText(value: currentCounterValue)
     }
-
 }
