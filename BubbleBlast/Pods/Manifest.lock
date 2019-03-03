@@ -11,7 +11,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PhysicsEngine:
-    :commit: a668da0e1f59a85d32ca4c7e2d151d12444b0952
+    :commit: dcfa4e86704e2df029610044a2f8a807f4c4e0d3
     :git: https://github.com/cs3217-1819/2019-ps4-jieliangang.git
 
 SPEC CHECKSUMS:

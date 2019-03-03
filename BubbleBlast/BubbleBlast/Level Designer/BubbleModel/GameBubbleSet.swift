@@ -6,6 +6,8 @@
 //  Copyright © 2019 nus.cs3217.a0101010. All rights reserved.
 //
 
+import UIKit
+
 /**
  `GameBubbleSet` contains all the `GameBubbles` in order from left to right, then top
  to bottom.
@@ -13,15 +15,7 @@
 class GameBubbleSet: Codable {
     private var bubbles = [GameBubble]()
 
-    private(set) var isHexagonal = true {
-        didSet {
-            if isHexagonal {
-                removePadding()
-            } else {
-                addPadding()
-            }
-        }
-    }
+    private(set) var isHexagonal = true
 
     /// Creates a hexagonal `GameBubbleSet` with all bubbles set to `EmptyBubble`
     /// - Parameter numberOfRows: the number of rows the bubble grid contains
@@ -29,7 +23,7 @@ class GameBubbleSet: Codable {
         guard numberOfRows >= 0 else {
             return
         }
-        let numberOfBubbles = Constants.LevelDesigner.totalNumOfBubblesInRect
+        let numberOfBubbles = Constants.LevelDesigner.totalNumOfBubblesInHex
         for _ in 0..<numberOfBubbles {
             bubbles.append(EmptyBubble())
         }
@@ -94,7 +88,7 @@ class GameBubbleSet: Codable {
     }
 
     /// Add padding bubbles
-    func addPadding() {
+    private func addPadding() {
         for index in stride(from: Constants.Game.numOfBubblesInRowSet,
                             through: Constants.LevelDesigner.totalNumOfBubblesInHex,
                             by: Constants.Game.numOfBubblesInRowSet).reversed() {
@@ -103,7 +97,7 @@ class GameBubbleSet: Codable {
     }
 
     /// Remove padding bubbles
-    func removePadding() {
+    private func removePadding() {
         for index in stride(from: Constants.Game.numOfBubblesInRowSet,
                             through: Constants.LevelDesigner.totalNumOfBubblesInRect,
                             by: Constants.Game.numOfBubblesInRowSet + 1).reversed() {
@@ -112,10 +106,11 @@ class GameBubbleSet: Codable {
     }
 
     func updateGridLayout(toHex: Bool) {
-        guard toHex != isHexagonal else {
+        guard isHexagonal != toHex else {
             return
         }
         isHexagonal = toHex
+        isHexagonal ? removePadding() : addPadding()
     }
 
     var bubblesLeft: Set<BubbleType> {
@@ -157,9 +152,8 @@ class GameBubbleSet: Codable {
     required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let codableBubbles = try values.decode([BubbleType].self, forKey: .bubbles)
-        let gridType = try values.decode(Bool.self, forKey: .gridType)
-
+        let newIsHex = try values.decode(Bool.self, forKey: .gridType)
+        isHexagonal = newIsHex
         bubbles = codableBubbles.map { bubbleOfType($0) }
-        updateGridLayout(toHex: gridType)
     }
 }

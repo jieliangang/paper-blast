@@ -62,6 +62,61 @@ class Player {
                                           y: nextBubble.layer.position.y)
         self.secondNextBubblePosition = CGPoint(x: secondNextBubble.layer.position.x,
                                                 y: secondNextBubble.layer.position.y)
+        //drawCannon()
+    }
+
+     func drawCannon() {
+        guard let overallImage = UIImage(named: "cannon.png") else {
+            return
+        }
+        let overallImageHeight = overallImage.size.height
+        let overallImageWidth = overallImage.size.width
+
+        let cannonHeight = overallImageHeight / 2 * 2
+        let cannonWidth = overallImageWidth / 6 * 2
+
+        var cannonArray = [UIImage]()
+
+        guard let cgImage = overallImage.cgImage else {
+            return
+        }
+        for index in 0..<12 {
+            let rect = CGRect(x: cannonWidth * CGFloat(index % 6),
+                              y: cannonHeight * CGFloat(index / 6),
+                              width: cannonWidth,
+                              height: cannonHeight)
+
+            guard let croppedCannon = cgImage.cropping(to: rect) else {
+                continue
+            }
+            cannonArray.append(UIImage(cgImage: croppedCannon))
+        }
+
+        cannon.image = cannonArray[0]
+        cannon.animationImages = cannonArray
+        cannon.animationDuration = 1/4
+        cannon.animationRepeatCount = 1
+    }
+
+    func loadBubble(nextType: BubbleType) {
+        canShoot = false
+        bubbleToShoot.image = nil
+        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations: {
+            self.nextBubble.layer.position = self.bubbleToShoot.layer.position
+            self.secondNextBubble.layer.position = self.nextBubblePosition
+        }, completion: { _ in
+            self.currentBubbleType = self.nextBubbleType
+            self.nextBubbleType = self.secondNextBubbleType
+            self.secondNextBubbleType = nextType
+            self.nextBubble.layer.position = self.nextBubblePosition
+
+            self.secondNextBubble.alpha = 0.0
+            self.secondNextBubble.layer.position = self.secondNextBubblePosition
+            UIView.animate(withDuration: 0.3, animations: {
+                self.secondNextBubble.alpha = 0.5
+            })
+            self.canShoot = true
+        })
     }
 
     func updateLoadedBubbles(set: Set<BubbleType>) {

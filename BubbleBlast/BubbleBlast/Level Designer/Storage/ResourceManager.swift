@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class ResourceManager {
     static func imageName(of type: BubbleType) -> String {
@@ -23,5 +24,8 @@ class ResourceManager {
         default: name = "bubble-translucent_white.png"
         }
         return name
+    }
+    static func imageView(of type: BubbleType) -> UIImage? {
+        return UIImage(named: imageName(of: type))
     }
 }

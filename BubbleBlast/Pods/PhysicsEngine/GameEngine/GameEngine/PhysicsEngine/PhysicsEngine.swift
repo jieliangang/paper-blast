@@ -21,6 +21,9 @@ import Foundation
  
  */
 public class PhysicsEngine {
+    
+    public typealias BodyWallHandler = ((RigidBody, Wall) -> Void)
+    public typealias BodyBodyHandler = ((RigidBody, RigidBody) -> Void)
 
     let minX: Double
     let maxX: Double
@@ -31,11 +34,6 @@ public class PhysicsEngine {
     private var droppingBodies = Set<RigidBody>()
 
     private let gravity: Vector2
-
-    public var resolveMovingBodyCollisionWithWall: ((RigidBody, Wall) -> Void)?
-    public var resolveMovingBodyCollisionWithStatBody: ((RigidBody, RigidBody) -> Void)?
-    public var resolveMovingBodyCollisionWithMovingBody: ((RigidBody, RigidBody) -> Void)?
-    public var resolveDroppingBodyCollisionWithWall: ((RigidBody, Wall) -> Void)?
 
     public init(minX: Double, maxX: Double, minY: Double, maxY: Double, gravity: Vector2) {
         self.minX = minX
@@ -107,14 +105,16 @@ public class PhysicsEngine {
     }
 
     /// Update moving and dropping bodies' position and velocity for the next timestep
-    public func update(time: Double) {
+    public func update(time: Double, movingWithStat: BodyBodyHandler, movingWithMoving: BodyBodyHandler,
+                       movingWithWall: BodyWallHandler, droppingWithWall: BodyWallHandler) {
         for body in movingBodies {
             body.update(time: time)
-            handleMovingBodyCollision(body: body)
+            handleMovingBodyCollision(body: body, movingWithStat: movingWithStat,
+                                      movingWithMoving: movingWithMoving, movingWithWall: movingWithWall)
         }
         for body in droppingBodies {
             body.update(time: time)
-            handleDroppingBodyCollision(body: body)
+            handleDroppingBodyCollision(body: body, droppingWithWall: droppingWithWall)
         }
     }
 
@@ -141,11 +141,12 @@ public class PhysicsEngine {
     }
 
     // Detect and resolve moving body collision with environment
-    private func handleMovingBodyCollision(body: RigidBody) {
+    private func handleMovingBodyCollision(body: RigidBody, movingWithStat: BodyBodyHandler,
+                                           movingWithMoving: BodyBodyHandler, movingWithWall: BodyWallHandler) {
         // Detect collision with stationary bubbles
         for stationaryBody in stationaryBodies {
             if hasCollisionBetweenBodies(body, with: stationaryBody) {
-                resolveMovingBodyCollisionWithStatBody?(body, stationaryBody)
+                movingWithStat(body, stationaryBody)
                 return
             }
         }
@@ -153,7 +154,7 @@ public class PhysicsEngine {
         // Detect collision with walls
         for wall in Wall.allCases {
             if hasCollisionWithBounds(body: body, wall: wall) {
-                resolveMovingBodyCollisionWithWall?(body, wall)
+                movingWithWall(body, wall)
                 break
             }
         }
@@ -161,7 +162,7 @@ public class PhysicsEngine {
         // Detect collision with moving bubbles
         for movingBody in movingBodies where body != movingBody {
             if hasCollisionBetweenBodies(body, with: movingBody) {
-                resolveMovingBodyCollisionWithMovingBody?(body, movingBody)
+                movingWithMoving(body, movingBody)
                 break
             }
         }
@@ -169,11 +170,11 @@ public class PhysicsEngine {
 
     // Detect and resolve dropping body collision with environment
     // Current version (PS4) does not interact with other bodies.
-    private func handleDroppingBodyCollision(body: RigidBody) {
+    private func handleDroppingBodyCollision(body: RigidBody, droppingWithWall: BodyWallHandler) {
         // Detect collision with boundaries
         for wall in Wall.allCases {
             if hasCollisionWithBounds(body: body, wall: wall) {
-                resolveDroppingBodyCollisionWithWall?(body, wall)
+                droppingWithWall(body, wall)
                 break
             }
         }

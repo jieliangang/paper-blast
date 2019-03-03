@@ -11,7 +11,7 @@ import PhysicsEngine
 
 struct Constants {
     struct Physics {
-        static let velocityMagnitude = 1200.0
+        static let velocityMagnitude = 1400.0
         static let gravity = Vector2(xComponent: 0, yComponent: 800)
         static let nullVector = Vector2(xComponent: 0, yComponent: 0)
     }
@@ -22,7 +22,7 @@ struct Constants {
         static let numOfBubblesInEvenRow = 12
         static let numOfBubblesInOddRow = numOfBubblesInEvenRow - 1
         static let numOfBubblesInRowSet = numOfBubblesInEvenRow + numOfBubblesInOddRow
-        static let maxNumOfBubblesInHex = numOfBubblesInRowSet * numOfRows / 2 
+        static let maxNumOfBubblesInHex = numOfBubblesInRowSet * numOfRows / 2
         static let maxNumOfBubblesInRect = numOfRows * numOfBubblesInEvenRow
         static let numOfBubblesToPop = 3
         static var randomDroppingInitialVelocity: Vector2 {
@@ -36,5 +36,10 @@ struct Constants {
         static let totalNumOfBubblesInHex = Game.numOfBubblesInRowSet * (numOfRows / 2) +
                                             Game.numOfBubblesInOddRow * (numOfRows % 2)
         static let totalNumOfBubblesInRect = Game.numOfBubblesInEvenRow * numOfRows
+    }
+    struct NotificationName {
+        static let reloadCell = Notification.Name("reloadCell")
+        static let gameOver = Notification.Name("gameOver")
+        static let moveCell = Notification.Name("moveCell")
     }
 }
