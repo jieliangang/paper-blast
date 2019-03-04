@@ -16,25 +16,30 @@ After the launched bubble has found a resting position, if it is connected to ot
 After identically-colored bubbles are removed, if there are bubbles that are not connected to the bubbles on the top wall, they will be dropped too.
 
 ***Special bubbles***
+
 * **Indestructible Bubble** - Cannot be removed through connecting with adjacent bubbles of the same color. They have to be removed by falling out of the screen.
 * **Lightning Bubble** - Removes all bubbles in the same row as it. All hanging bubbles thereafter should also be removed.
 * **Bomb Bubble** - Removes all bubbles adjacent to it.
 * **Star Bubble** - When a colored bubble comes into contact with the star bubble, all bubbles of that color in the arena will be removed.
 
 ***Score system***
+
 Obtained when popped or dropped.
 * Colored bubbles - 30 points
 * Indestructible bubbles - 20 points
 * Special bubbles (excluding indestructible) - 10 points
 
 ***Limited number of shots***
+
 50 bubbles to shoot per round. 
 You lose if you run out of bubbles to shoot and had yet to clear the game!.
 
 ***Game Over***
+
 If you reach the 14th row, you lose automatically! :(
 
 ***Two Player Mode***
+
 If you run out of bubbles to shoot, the game ends when the other player clears the game or also run out of bubbles!
 Player with the highest score wins!
 You can interfer as the bubbles you shoot will collide with the opposite players' bubble!
@@ -43,14 +48,18 @@ You can interfer as the bubbles you shoot will collide with the opposite players
 ### Problem 1: Cannon Direction
 
 **Single Player**
+
 Tap to shoot bubble.
 Pan to aim, and release to shoot bubble.
 
 **Multiplayer**
+
 **Player 1**
+
 Tap at left side of screen to shoot bubble.
 Pan at left side of screen to aim, and release at left side of screen to shoot bubble. Panning to area beyond left screen cancels aim.
 **Player 2**
+
 Tap at right side of screen to shoot bubble.
 Pan at right side of screen to aim, and release at right side of screen to shoot bubble. Panning to area beyond right screen cancels aim.
 
@@ -600,12 +609,17 @@ Features implemented
 
 * Added ***Paper theme*** to the game, included changes to the bubbles, background image, and user interface
 * Bubbles drop in accordance to in-game gravity
+* Background music added
+* Sound effect when cannon is shot
+* Sound effect when bubbles are popped, special sounds when power bubbles are triggered
+* Score effect shown when bubbles are popped
 * Cannons have limited number (50) of shots in the game
 	* In single player mode, if all shots are used up and game is not cleared, player loses
 	* In multiplayer mode, if all shots are used up, you will have to watch the other player play!
+	* When all shots are used up in multiplayer mode, players can't shoot and all load bubbles become indestructible
 * Aim assist / cannon trajectory added to the game, which is activated when the cannon is panned
 * Score is added to the game
-	* Colored and indestructible removed ***OR*** drops to ground
+	* Colored and indestructible removed OR drops to ground
 	* Corresponds to different teammates
 	* Score added in a nice counting manner!
 * End game screen added
@@ -614,13 +628,13 @@ Features implemented
 
 ### Problem 10: Final Reflection
 
-The design of my app adheres closely to the MVC architecture. The adherence to MVC has led to a high cohesion within my app, as MVC logically groups relevant and related actions together to one controller. Similarly, the views for a specific model are also grouped together.  Each section of my game is thus structured according to the MVC design pattern, and I have then separated my game into four main sections based on a single-view application: Start, Level Designer, Level Selection, and Game. 
+The design of my app adheres closely to the MVC architecture. The adherence to MVC has led to a high cohesion within my app, as MVC logically groups relevant and related actions together to one controller. Similarly, the views for a specific model are also grouped together. Each section of my game is thus structured according to the MVC design pattern, and I have then separated my game into four main sections based on a single-view application: Start, Level Designer, Level Selection, and Game. 
 
 The Level Designer categorizes all structure and game data related objects to the Model section. Three view controllers, `LevelDesignerViewController`, `BubbleGridViewController` and `PopOverViewController` are implemented to seperate responsibilities and functionalities of the respective controllers. This would also prevent Massive View Controller, in which one controller is in charge of too many responsibilities. For Problem Set 3, I spent a lot of time restructuring my model and controllers to enhance cohesion and reduce coupling. For instance, `LevelDesignerViewController` is in charge of most non-bubble-grid-related input from the user, and passes instructions to the other two view controller if required. `PopOverViewController` manages displaying and loading of game levels. `BubbleGridViewController` is in charge of the bubble grid, as well as storing the game model data. I felt that my design pattern for the Level Designer is well done, with the handling of different level designer actions delegated to different controllers and views. Further attempts to improve the structure could be useful, but not necessary.
 
 The MVC framework significantly reduces coupling among views, models and controllers. As observed in my class diagram, there is minimal interaction between each view and model, as the controller serves as a link between them. Also, most interactions between sections are conducted via the controllers. I suppose the innate design and patterns introduced by Apple has led to my current architecture, as I find myself being able to modify my code or add further extensions and enhancements in PS5 easily and conveniently due to the separation of responsibilities which MVC offers. I was able to add new features for Bells & Whistles easily, and work on different sections concurrently.The issue of Massive View Controller however still persists, despite my numerous attempts to circumvent such phenomenon. Such issue is highlighted in my `GameViewController`.
 
-My `GameViewController` is mainly in charge of handling user inputs and rendering the game objects. As I continue to add more features, I noticed how my `GameViewController` and `GameEngine` continues to grow longer and longer. I initially wanted to separate the `UICollectionView` part just like what I did for Level Designer, it however seems unnecessary as the code required to link both controllers would be even more tedious and complex due to the various game logic involved. I structured my `GameViewController` such that it is in charge or two main things as mention earlier, to handle user inputs, and to render the game. Perhaps what I could have done to improve my architecture is to separate the game renderer with the user input handling. However, as they share the same view, I was not able to sketch out a viable solution, and decided to stick to my current structure, which works and further abstractions are not required at this point, as my app is rather small. However, as I will be working with larger projects in the future, I hope that I can pick up new skills and techniques to designing a better software architecture.
+My `GameViewController` is mainly in charge of handling user inputs and rendering the game objects. As I continue to add more features, I noticed how my `GameViewController` and `GameEngine` continues to grow longer and longer. I initially wanted to separate the `UICollectionView` controller just like what I did for Level Designer, it however seems unnecessary as the code required to link both controllers would be even more tedious and complex due to the various game logic involved. I structured my `GameViewController` such that it is in charge of two main things as mention earlier, to handle user inputs, and to render the game. Perhaps what I could have done to improve my architecture is to separate the game renderer with the user input handling. However, as they share the same view, I was not able to sketch out a viable solution, and decided to stick to my current structure, which works and further abstractions are not required at this point, as my app is rather small. However, as I will be working with larger projects in the future, I hope that I can pick up new skills and techniques to designing a better software architecture.
 
 My `GameEngine` handles the game logic, including collision resolution. For efficient handling and rendering of game objects state and animation, internal representations of the game objectsm the ***Model*** are categorized to three sections:
  - StationaryBubbleObjects: Represents the bubble on the isometric grid. 
@@ -628,15 +642,17 @@ My `GameEngine` handles the game logic, including collision resolution. For effi
  - DroppingBubbleObjects: Represents disconnected bubble which are dropping from the grid for animation purposes.
  All game logic is thus based on these three game objects type, and essentially consists of adding and removing the objects based on certain game logic. Subsequent updates to the view based on in-game occurences are then passed on to the controller for further handling. 
 
- I personally felt that my distinguishment between a physical environment (in physics engine) and game environment has allowed me to be able to extend my game engine easily. For instance, I was able to animate the dropping of bubble objects with my physics engine, which seems cooler than a basic UIViewAnimation. The controller does not conduct any processing of the internal game logic, as my game engine only consists of one main game-related public method: `shootBubble()`. The controller then focuses on monitoring the `Model` in game engine, and subsequently update the view.
+ I personally felt that my distinguishment between a physical environment (in physics engine) and game environment (in game engine) has allowed me to be able to extend my game engine easily. For instance, I was able to animate the dropping of bubble objects with my physics engine, which seems cooler than a basic UIViewAnimation. The controller does not conduct any processing of the internal game logic, with my game engine only consisting of only one main game-related public method: `shootBubble()`. The controller then focuses on monitoring the `Model` in game engine, and subsequently update the view.
 
  I included a `Player` class, which essentially consists of the View-related objects tied to a player. This facilitates the inclusion of two players in a game, and can be extended to even more! Responsibilites such as drawing cannons, loading bubbles is then passed to `Player`. This was one refactoring task I have done for a more readable and cleaner code.
 
- I feel that my `GameEngine` and `GameViewController` could be further refactored and improved, seeing how complex and long both classes are. Due to the high coupling within both class, as game logic often involves various different components, I struggle to find a fix while adhering to MVC. Perhaps I should have looked at other possible design pattern, as I intend to continue learning new software engineering patterns and architectures in my future projects. This app has introduced MVC, along with various other design patterns which comes with Swift, and I learnt a lot, and ultimately had fun. I hope you enjoy my game, as much as I enjoyed designing it.
+ I feel that my `GameEngine` and `GameViewController` could be further refactored and improved, seeing how complex and long both classes are. Due to the high coupling within both class, as game logic often involves various different components, I struggle to find a fix while adhering to MVC. Perhaps I could have looked at other possible design pattern, as I intend to continue learning new software engineering patterns and architectures in my future projects. This app has introduced MVC, along with various other design patterns which comes with Swift. I learnt a lot, and ultimately had fun. I hope you enjoy my game, as much as I enjoyed designing it.
 
 
-
-
+Resource
+* Background music: https://youtu.be/pwfLT4LJkSA
+* Lightning sound effect: https://youtu.be/_MlaZ19V5n8
+* Star sound effect: https://youtu.be/iMzSi_YzSTw
 
 
 
