@@ -25,6 +25,7 @@ class ResourceManager {
         }
         return name
     }
+
     static func imageView(of type: BubbleType) -> UIImage? {
         return UIImage(named: imageName(of: type))
     }

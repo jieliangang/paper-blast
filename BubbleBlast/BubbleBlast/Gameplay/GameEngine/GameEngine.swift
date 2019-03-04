@@ -20,6 +20,7 @@ import UIKit
  - MovingBubbleObjects: Represents bubble which are being shot
  - DroppingBubbleObjects: Represents disconnected bubble which are dropping from the grid for animation
  
+ Based on PS4
  */
 class GameEngine {
     private var physicsEngine: PhysicsEngine
@@ -27,30 +28,22 @@ class GameEngine {
     private(set) var movingBubbleObjects = Set<BubbleObject>()
     private(set) var droppingBubbleObjects = Set<BubbleObject>()
 
-    // Maps `BubbleObject` to index in grid
+    /// Maps `BubbleObject` to index in grid
     private(set) var stationaryBubbleObjectsMap: [BubbleObject: Int] = [:]
-    // Maps `RigidBody` in `PhysicsEngine` to `BubbleObject`
+    /// Maps `RigidBody` in `PhysicsEngine` to `BubbleObject`
     private var dictionary: [ObjectIdentifier: BubbleObject] = [:]
-    // Center positions of cells in the isometric bubble grid
+    /// Center positions of cells in the isometric bubble grid
     private var gridPositions: [Vector2]
 
-    var bubblesLeft: Set<BubbleType> {
-        return Set(stationaryBubbleObjects.values
-            .map { $0.type }
-            .filter { $0.isColor()})
+    private let numOfBubblesInEvenRow = Constants.Game.numOfBubblesInEvenRow
+    private let numOfBubblesInOddRow: Int
+    private let maxNumOfBubblesInGame: Int
+    private let isHexagonal: Bool
+
+    private var randomDroppingInitialVelocity: Vector2 {
+        return Vector2(xComponent: Double.random(in: -200...200),
+                       yComponent: Double.random(in: -150...(-100)))
     }
-
-    func randomBubbleType() -> BubbleType {
-        return bubblesLeft.randomElement() ?? BubbleType.colorRed
-    }
-
-    let numOfBubblesInEvenRow = Constants.Game.numOfBubblesInEvenRow
-    let numOfBubblesInOddRow: Int
-    let maxNumOfBubblesInGame: Int
-    let isHexagonal: Bool
-
-    let reloadCellNotification = NSNotification.Name("reloadCell")
-    let moveCellNotification = NSNotification.Name("moveCell")
 
     init(minX: Double, maxX: Double, minY: Double, maxY: Double,
          gridPositions: [Vector2], game: GameBubbleSet, maxNumOfBubbles: Int) {
@@ -73,7 +66,33 @@ class GameEngine {
             physicsEngine.addStationaryBody(object.body)
             dictionary[ObjectIdentifier(object.body)] = object
         }
-        dropUnconnectedObjects(player: .bot)
+
+        // Remove unattached objects
+        let attachedObjects = findAttachedBubbles()
+        for index in stationaryBubbleObjects.keys where !attachedObjects.contains(index) {
+            guard let object = stationaryBubbleObjects[index] else {
+                return
+            }
+            stationaryBubbleObjects.removeValue(forKey: index)
+            stationaryBubbleObjectsMap.removeValue(forKey: object)
+            physicsEngine.removeStationaryBody(object.body)
+            dictionary.removeValue(forKey: ObjectIdentifier(object.body))
+        }
+    }
+
+    private func initialiseGridObjects() {
+        
+    }
+
+    /// Remaining color types of stationary bubbles left
+    var bubblesLeft: Set<BubbleType> {
+        return Set(stationaryBubbleObjects.values
+            .map { $0.type }
+            .filter { $0.isColor()})
+    }
+    /// Random type of remaining color types
+    func randomBubbleType() -> BubbleType {
+        return bubblesLeft.randomElement() ?? BubbleType.colorRed
     }
 
     /// Update state of game and physics engine
@@ -114,7 +133,6 @@ class GameEngine {
 
 // MARK: Basic actions
 extension GameEngine {
-
     /// Inserts a moving bubble object in the game and updates physics engine
     /// - Parameters:
     ///     - position: initial position of bubble
@@ -157,6 +175,7 @@ extension GameEngine {
     }
 
     /// Removes a stationary bubble object from the game grid and updates physics engine
+    /// Triggers if is special power bubble
     /// - Parameters:
     ///     - object: stationary bubble object to be removed
     private func removeStationaryObject(_ index: Int, _ player: PlayerType) {
@@ -165,11 +184,11 @@ extension GameEngine {
         }
         object.player = player
         // Remove object
-        self.stationaryBubbleObjects.removeValue(forKey: index)
-        self.stationaryBubbleObjectsMap.removeValue(forKey: object)
-        self.physicsEngine.removeStationaryBody(object.body)
-        self.dictionary.removeValue(forKey: ObjectIdentifier(object.body))
-        self.popCell(type: object.type, playerId: player)
+        stationaryBubbleObjects.removeValue(forKey: index)
+        stationaryBubbleObjectsMap.removeValue(forKey: object)
+        physicsEngine.removeStationaryBody(object.body)
+        dictionary.removeValue(forKey: ObjectIdentifier(object.body))
+        popCell(type: object.type, playerId: player, index: index)
 
         // Handle triggering of power bubbles
         switch object.type {
@@ -192,36 +211,45 @@ extension GameEngine {
         physicsEngine.dropBody(object.body)
 
         // Set initial velocity of dropping object to a random upwards velocity
-        object.body.velocity = Constants.Game.randomDroppingInitialVelocity
-        reloadCellAt(index)
+        object.body.velocity = randomDroppingInitialVelocity
+        clearCell(index)
+    }
+}
+
+// MARK: Notification Sending
+extension GameEngine {
+    // Send notification to controller to move cell to grid position
+    private func moveCell(_ center: CGPoint, _ type: BubbleType, _ final: CGPoint) {
+        NotificationCenter.default.post(name: Constants.NotificationName.addCell, object: nil,
+                                        userInfo: ["center": center, "type": type, "final": final])
     }
 
-    /// Send notification to controller to reload cell in bubble collection view
-    private func reloadCellAt(_ index: Int) {
-        NotificationCenter.default.post(name: reloadCellNotification, object: nil, userInfo: ["index": index])
+    /// Send notification to controller to clear cell in bubble collection view
+    private func clearCell(_ index: Int) {
+        NotificationCenter.default.post(name: Constants.NotificationName.clearCell,
+                                        object: nil, userInfo: ["index": index])
     }
 
-    /// Send notification to controller to reload cell in bubble collection view
-    private func popCell(type: BubbleType, playerId: PlayerType) {
+    /// Send notification to controller to pop cell in bubble collection view for score calculation
+    private func popCell(type: BubbleType, playerId: PlayerType, index: Int) {
         NotificationCenter.default.post(name: Constants.NotificationName.popCell,
+                                        object: nil, userInfo: ["type": type, "playerId": playerId, "index": index])
+    }
+    /// Send notification to controller to indicate bubble dropping to ground for score calculation
+    private func bubbleReachGround(type: BubbleType, playerId: PlayerType) {
+        NotificationCenter.default.post(name: Constants.NotificationName.removeDropCell,
                                         object: nil, userInfo: ["type": type, "playerId": playerId])
     }
 
     /// Clear all stationary bubbles and send notification to controller to inform game over
     private func gameOver(_ loser: PlayerType) {
         dropEverything()
-
         NotificationCenter.default.post(name: NSNotification.Name("gameOver"), object: nil, userInfo: ["loser": loser])
     }
 
+    /// Send notification to controller to inform no colored bubbles left on grid
     private func noBubblesLeft() {
-        dropEverything()
         NotificationCenter.default.post(name: NSNotification.Name("noBubblesLeft"), object: nil)
-    }
-
-    private func moveCell(_ center: CGPoint, _ type: BubbleType, _ final: CGPoint) {
-        NotificationCenter.default.post(name: moveCellNotification, object: nil,
-                                        userInfo: ["center": center, "type": type, "final": final])
     }
 }
 
@@ -249,15 +277,35 @@ extension GameEngine {
     }
 
     /// Drop all connected/stationary bubbles in the game
-    func dropEverything() {
+    private func dropEverything() {
         for index in stationaryBubbleObjects.keys {
             dropStationaryObjectFromGrid(index: index, player: .bot)
         }
     }
 }
 
-// MARK: Powers
+// MARK: Special powers
 extension GameEngine {
+    private func removeAllBubblesOfType(_ typeToRemove: BubbleType, _ player: PlayerType) {
+        for (index, bubble) in stationaryBubbleObjects where bubble.type == typeToRemove {
+            removeStationaryObject(index, player)
+        }
+    }
+
+    private func removeRow(_ index: Int, _ player: PlayerType) {
+        let (firstInRow, lastInRow) = getFirstAndLastIndiceInRowOf(index)
+        for index in firstInRow...lastInRow {
+            removeStationaryObject(index, player)
+        }
+    }
+
+    private func removeSurroundingBubbles(_ index: Int, _ player: PlayerType) {
+        for neighborIndex in neighbor(of: index) {
+            removeStationaryObject(neighborIndex, player)
+        }
+    }
+
+    /// Remove neighbor special bubbles
     private func handlePowerBubbles(around index: Int, of type: BubbleType, _ player: PlayerType) {
         for neighborIndex in neighbor(of: index) {
             guard let bubble = stationaryBubbleObjects[neighborIndex] else {
@@ -272,26 +320,6 @@ extension GameEngine {
             default:
                 continue
             }
-        }
-    }
-
-    private func removeAllBubblesOfType(_ typeToRemove: BubbleType, _ player: PlayerType) {
-        for (index, bubble) in stationaryBubbleObjects where bubble.type == typeToRemove {
-            removeStationaryObject(index, player)
-        }
-    }
-
-    private func removeRow(_ index: Int, _ player: PlayerType) {
-        let (firstInRow, lastInRow) = getFirstAndLastIndiceInRowOf(index)
-
-        for index in firstInRow...lastInRow {
-            removeStationaryObject(index, player)
-        }
-    }
-
-    private func removeSurroundingBubbles(_ index: Int, _ player: PlayerType) {
-        for neighborIndex in neighbor(of: index) {
-            removeStationaryObject(neighborIndex, player)
         }
     }
 }
@@ -311,10 +339,8 @@ extension GameEngine {
         // BFS search to look for adjacent bubbles with same colour
         while let currIndex = queue.dequeue() {
             for neighborIndex in neighbor(of: currIndex) {
-                guard neighborIndex >= 0, neighborIndex < maxNumOfBubblesInGame else {
-                    continue
-                }
-                guard !visited.contains(neighborIndex) else {
+                guard neighborIndex >= 0, neighborIndex < maxNumOfBubblesInGame,
+                    !visited.contains(neighborIndex) else {
                     continue
                 }
                 visited.insert(neighborIndex)
@@ -448,6 +474,14 @@ extension GameEngine {
         }
         return (firstInRow, lastInRow)
     }
+
+    private func detectGameOver(index: Int) -> Bool {
+        if isHexagonal {
+            return index > Constants.Game.maxNumOfBubblesInHex - Constants.Game.numOfBubblesInEvenRow
+        } else {
+            return index > Constants.Game.maxNumOfBubblesInRect - Constants.Game.numOfBubblesInEvenRow
+        }
+    }
 }
 
 // MARK: Collision resolution
@@ -462,10 +496,7 @@ extension GameEngine {
             stationaryBubbleObjectsMap.keys.contains(object2) else {
             return
         }
-        switch (body1.shape, body2.shape) {
-        case (Shape.circle, Shape.circle):
-            connectToNearestPosition(object1, to: object2)
-        }
+        connectToNearestPosition(object1, to: object2)
     }
 
     /// Resolve collision of a moving object with walls/bounds
@@ -475,10 +506,7 @@ extension GameEngine {
         }
         switch wall {
         case .top:
-            switch body.shape {
-            case Shape.circle:
-                connectToNearestPositionOnTopWall(object)
-            }
+            connectToNearestPositionOnTopWall(object)
         case .bottom:
             // remove moving object when reached bottom of screen
             movingBubbleObjects.remove(object)
@@ -500,8 +528,7 @@ extension GameEngine {
             droppingBubbleObjects.remove(object)
             physicsEngine.removeDroppingBody(object.body)
             dictionary.removeValue(forKey: ObjectIdentifier(object.body))
-            popCell(type: object.type, playerId: object.player)
-
+            bubbleReachGround(type: object.type, playerId: object.player)
         case .top, .left, .right:
             resolveBoundCollisionBetween(body: body, wall: wall)
         }
@@ -524,34 +551,6 @@ extension GameEngine {
         }
         connectObject(object, to: index)
 
-    }
-
-    private func connectObject(_ object: BubbleObject, to index: Int) {
-        let player = object.player
-        switch object.body.shape {
-        case Shape.circle(radius: let radius):
-            self.insertStationaryBubble(radius: radius,
-                                        type: object.type, index: index)
-
-            let vector = object.body.position
-            let position = gridPositions[index]
-            let center = CGPoint(x: vector.xComponent, y: vector.yComponent)
-            let final = CGPoint(x: position.xComponent, y: position.yComponent)
-            self.moveCell(center, object.type, final)
-            self.removeMovingObject(object)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300), execute: {
-            self.removeAdjacentSimilarColorBubbles(of: index, player)
-            self.handlePowerBubbles(around: index, of: object.type, player)
-            self.dropUnconnectedObjects(player: player)
-
-            // Detect for game over
-            if self.detectGameOver(index: index) {
-                self.gameOver(player)
-            } else if self.bubblesLeft.isEmpty {
-                self.noBubblesLeft()
-            }
-        })
     }
 
     /// Find closest empty cell when bubble collides with an existing bubble
@@ -588,12 +587,29 @@ extension GameEngine {
         return nearestIndex
     }
 
-    private func detectGameOver(index: Int) -> Bool {
-        if isHexagonal {
-            return index > Constants.Game.maxNumOfBubblesInHex - Constants.Game.numOfBubblesInEvenRow
-        } else {
-            return index > Constants.Game.maxNumOfBubblesInRect - Constants.Game.numOfBubblesInEvenRow
+    private func connectObject(_ object: BubbleObject, to index: Int) {
+        let player = object.player
+        switch object.body.shape {
+        case Shape.circle(radius: let radius):
+            self.insertStationaryBubble(radius: radius,
+                                        type: object.type, index: index)
+            let initial = object.body.position.toCGPoint()
+            let final = gridPositions[index].toCGPoint()
+            removeMovingObject(object)
+            moveCell(initial, object.type, final)
         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300), execute: {
+            self.removeAdjacentSimilarColorBubbles(of: index, player)
+            self.handlePowerBubbles(around: index, of: object.type, player)
+            self.dropUnconnectedObjects(player: player)
+
+            // Detect for game over
+            if self.detectGameOver(index: index) {
+                self.gameOver(player)
+            } else if self.bubblesLeft.isEmpty {
+                self.noBubblesLeft()
+            }
+        })
     }
 
     /// Default collision resolution of `RigidBody` with physical environment bounds
@@ -609,7 +625,6 @@ extension GameEngine {
         }
     }
 
-    // Not used in PS4. Prepared for PS5.
     // Reference: https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional_collision_with_two_moving_objects
     private func resolveElasticCollisionBetween(_ bodyA: RigidBody, with bodyB: RigidBody) {
         guard let objectA = dictionary[ObjectIdentifier(bodyA)],

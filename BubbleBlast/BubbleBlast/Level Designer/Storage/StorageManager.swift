@@ -154,5 +154,24 @@ class StorageManager {
         }
         return []
     }
+    
+    static func preloadData() {
+        let preloadFileNames = ["Chaining", "Intermediate", "Introduction", "Maze"]
+        let fileManager = FileManager.default
 
+        for fileName in preloadFileNames {
+            let gameDataURL = getGameURL().appendingPathComponent(fileName, isDirectory: false)
+            let pictureName = fileName + ".png"
+            let screenshotURL = getScreenshotURL().appendingPathComponent(pictureName)
+
+            if let path = Bundle.main.path(forResource: fileName, ofType: ".png") {
+                let url = URL(fileURLWithPath: path)
+                try? fileManager.copyItem(at: url, to: screenshotURL)
+            }
+            if let path = Bundle.main.path(forResource: fileName, ofType: nil) {
+                let url = URL(fileURLWithPath: path)
+                try? fileManager.copyItem(at: url, to: gameDataURL)
+            }
+        }
+    }
 }

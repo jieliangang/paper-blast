@@ -44,6 +44,15 @@
 		D794E5152224F92C00F03BFE /* BubbleObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D794E5122224F92C00F03BFE /* BubbleObject.swift */; };
 		D794E5192224F93700F03BFE /* AlternatingBubbleLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D794E5172224F93700F03BFE /* AlternatingBubbleLayout.swift */; };
 		D794E51A2224F93700F03BFE /* BubbleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D794E5182224F93700F03BFE /* BubbleCell.swift */; };
+		D7FFE5E6222D13D500759EB0 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FFE5E5222D13D500759EB0 /* Result.swift */; };
+		D7FFE5EC222D236300759EB0 /* Introduction.png in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5E8222D236200759EB0 /* Introduction.png */; };
+		D7FFE5ED222D236300759EB0 /* Maze.png in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5E9222D236300759EB0 /* Maze.png */; };
+		D7FFE5EE222D236300759EB0 /* Intermediate.png in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5EA222D236300759EB0 /* Intermediate.png */; };
+		D7FFE5EF222D236300759EB0 /* Chaining.png in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5EB222D236300759EB0 /* Chaining.png */; };
+		D7FFE5F4222D237100759EB0 /* Intermediate in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5F0222D237000759EB0 /* Intermediate */; };
+		D7FFE5F5222D237100759EB0 /* Maze in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5F1222D237100759EB0 /* Maze */; };
+		D7FFE5F6222D237100759EB0 /* Chaining in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5F2222D237100759EB0 /* Chaining */; };
+		D7FFE5F7222D237100759EB0 /* Introduction in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5F3222D237100759EB0 /* Introduction */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +97,15 @@
 		D794E5122224F92C00F03BFE /* BubbleObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleObject.swift; sourceTree = "<group>"; };
 		D794E5172224F93700F03BFE /* AlternatingBubbleLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlternatingBubbleLayout.swift; sourceTree = "<group>"; };
 		D794E5182224F93700F03BFE /* BubbleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleCell.swift; sourceTree = "<group>"; };
+		D7FFE5E5222D13D500759EB0 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		D7FFE5E8222D236200759EB0 /* Introduction.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Introduction.png; sourceTree = "<group>"; };
+		D7FFE5E9222D236300759EB0 /* Maze.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Maze.png; sourceTree = "<group>"; };
+		D7FFE5EA222D236300759EB0 /* Intermediate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Intermediate.png; sourceTree = "<group>"; };
+		D7FFE5EB222D236300759EB0 /* Chaining.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chaining.png; sourceTree = "<group>"; };
+		D7FFE5F0222D237000759EB0 /* Intermediate */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Intermediate; sourceTree = "<group>"; };
+		D7FFE5F1222D237100759EB0 /* Maze */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Maze; sourceTree = "<group>"; };
+		D7FFE5F2222D237100759EB0 /* Chaining */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Chaining; sourceTree = "<group>"; };
+		D7FFE5F3222D237100759EB0 /* Introduction */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Introduction; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -204,6 +222,7 @@
 		D74FF50F2226D02D00B3DDC5 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				D7FFE5E7222D234A00759EB0 /* Preload Data */,
 				D746C90522283E0F00CF743A /* ResourceManager.swift */,
 				D74FF5102226D02D00B3DDC5 /* StorageManager.swift */,
 				D74FF5112226D02D00B3DDC5 /* StorageError.swift */,
@@ -223,11 +242,8 @@
 			isa = PBXGroup;
 			children = (
 				D794E50F2224F92C00F03BFE /* GameEngine */,
-				D794E50A2224F90E00F03BFE /* GameViewController.swift */,
-				D75D6309222B8D5300127319 /* TrajectoryPath.swift */,
-				D75D630B222BAEB600127319 /* UICountingLabel.swift */,
-				D75D630D222BC68600127319 /* CounterLabel.swift */,
-				D75D630F222BE24700127319 /* EndScreenViewController.swift */,
+				D7FFE5E3222CCF1300759EB0 /* Game Controllers */,
+				D7FFE5E2222CC95E00759EB0 /* Game View */,
 			);
 			path = Gameplay;
 			sourceTree = "<group>";
@@ -243,10 +259,9 @@
 		D794E50F2224F92C00F03BFE /* GameEngine */ = {
 			isa = PBXGroup;
 			children = (
-				D794E5122224F92C00F03BFE /* BubbleObject.swift */,
 				D794E5102224F92C00F03BFE /* GameEngine.swift */,
+				D794E5122224F92C00F03BFE /* BubbleObject.swift */,
 				D746C90D2229318900CF743A /* PlayerType.swift */,
-				D746C90F2229943000CF743A /* Player.swift */,
 			);
 			path = GameEngine;
 			sourceTree = "<group>";
@@ -261,6 +276,42 @@
 			path = BubbleGrid;
 			sourceTree = "<group>";
 		};
+		D7FFE5E2222CC95E00759EB0 /* Game View */ = {
+			isa = PBXGroup;
+			children = (
+				D746C90F2229943000CF743A /* Player.swift */,
+				D75D6309222B8D5300127319 /* TrajectoryPath.swift */,
+				D75D630B222BAEB600127319 /* UICountingLabel.swift */,
+				D75D630D222BC68600127319 /* CounterLabel.swift */,
+			);
+			path = "Game View";
+			sourceTree = "<group>";
+		};
+		D7FFE5E3222CCF1300759EB0 /* Game Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				D794E50A2224F90E00F03BFE /* GameViewController.swift */,
+				D75D630F222BE24700127319 /* EndScreenViewController.swift */,
+				D7FFE5E5222D13D500759EB0 /* Result.swift */,
+			);
+			path = "Game Controllers";
+			sourceTree = "<group>";
+		};
+		D7FFE5E7222D234A00759EB0 /* Preload Data */ = {
+			isa = PBXGroup;
+			children = (
+				D7FFE5F2222D237100759EB0 /* Chaining */,
+				D7FFE5F0222D237000759EB0 /* Intermediate */,
+				D7FFE5F3222D237100759EB0 /* Introduction */,
+				D7FFE5F1222D237100759EB0 /* Maze */,
+				D7FFE5EB222D236300759EB0 /* Chaining.png */,
+				D7FFE5EA222D236300759EB0 /* Intermediate.png */,
+				D7FFE5E8222D236200759EB0 /* Introduction.png */,
+				D7FFE5E9222D236300759EB0 /* Maze.png */,
+			);
+			path = "Preload Data";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -273,7 +324,7 @@
 				D730F0842224573F000FD7CB /* Frameworks */,
 				D730F0852224573F000FD7CB /* Resources */,
 				C275F98CAF566E5E2CF91C9E /* [CP] Embed Pods Frameworks */,
-				D7693E42222507EE001762E4 /* ShellScript */,
+				D7FFE5E4222CF92400759EB0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -322,9 +373,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7FFE5EE222D236300759EB0 /* Intermediate.png in Resources */,
+				D7FFE5F5222D237100759EB0 /* Maze in Resources */,
 				D730F09522245741000FD7CB /* LaunchScreen.storyboard in Resources */,
+				D7FFE5EC222D236300759EB0 /* Introduction.png in Resources */,
+				D7FFE5EF222D236300759EB0 /* Chaining.png in Resources */,
+				D7FFE5F6222D237100759EB0 /* Chaining in Resources */,
+				D7FFE5ED222D236300759EB0 /* Maze.png in Resources */,
 				D730F09222245741000FD7CB /* Assets.xcassets in Resources */,
 				D730F0902224573F000FD7CB /* Main.storyboard in Resources */,
+				D7FFE5F4222D237100759EB0 /* Intermediate in Resources */,
+				D7FFE5F7222D237100759EB0 /* Introduction in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,7 +434,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BubbleBlast/Pods-BubbleBlast-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D7693E42222507EE001762E4 /* ShellScript */ = {
+		D7FFE5E4222CF92400759EB0 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -390,7 +449,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -413,6 +472,7 @@
 				D794E5152224F92C00F03BFE /* BubbleObject.swift in Sources */,
 				D75D630A222B8D5300127319 /* TrajectoryPath.swift in Sources */,
 				D74FF50B2226CFE500B3DDC5 /* UIAlertController+CustomAlert.swift in Sources */,
+				D7FFE5E6222D13D500759EB0 /* Result.swift in Sources */,
 				D74FF50D2226CFE500B3DDC5 /* LoadDelegate.swift in Sources */,
 				D7693E412225039B001762E4 /* Queue.swift in Sources */,
 				D74FF5122226D02D00B3DDC5 /* StorageManager.swift in Sources */,

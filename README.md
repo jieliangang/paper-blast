@@ -35,7 +35,7 @@ Pan at right side of screen to aim, and release at right side of screen to shoot
 
 ### Problem 2: Upcoming Bubbles
 
-Upcoming bubbles will be a random colored bubble of **ONLY** the **present stationary colored bubbles** in the game. If any upcoming bubbles happened to be of a color which is removed midway through from the game, the bubble will be updated to a suitable color, which is a color present in the game.
+Upcoming bubbles will be a random colored bubble of **ONLY** the **present stationary colored bubbles** in the game. If any loaded upcoming bubbles happened to be of a color which is removed midway through the game, the bubble will be updated to a suitable color, which is a color present in the game. This ensures that the user will not "add" new color to the game if he/she have already cleared the color, to save the number of bubbles he/she have.
 
 ### Problem 3: Integration
 

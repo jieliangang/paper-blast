@@ -14,7 +14,7 @@ class SpecialBubble: GameBubble, Codable {
     var type: BubbleType
 
     init?(type: BubbleType) {
-        guard Constants.Game.powerTypes.contains(type) else {
+        guard Constants.Game.specialTypes.contains(type) else {
             return nil
         }
         self.type = type
@@ -22,6 +22,6 @@ class SpecialBubble: GameBubble, Codable {
     }
 
     private func checkRep() -> Bool {
-        return Constants.Game.powerTypes.contains(type)
+        return Constants.Game.specialTypes.contains(type)
     }
 }

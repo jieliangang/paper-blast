@@ -25,13 +25,12 @@ struct Constants {
         static let maxNumOfBubblesInHex = numOfBubblesInRowSet * numOfRows / 2
         static let maxNumOfBubblesInRect = numOfRows * numOfBubblesInEvenRow
         static let numOfBubblesToPop = 3
-        static var randomDroppingInitialVelocity: Vector2 {
-            return Vector2(xComponent: Double.random(in: -200...200),
-                           yComponent: Double.random(in: -150...(-100)))
-        }
         static let cannonAnimationTime = 1/4
-        static let colorTypes = [BubbleType.colorBlue, BubbleType.colorRed, BubbleType.colorGreen, BubbleType.colorYellow]
+        static let colorTypes = [BubbleType.colorBlue, BubbleType.colorRed,
+                                 BubbleType.colorGreen, BubbleType.colorYellow]
         static let powerTypes = [BubbleType.bomb, .lightning, .star]
+        static let specialTypes = [BubbleType.bomb, .lightning, .star, .indestructible]
+        static let cannonYOffset = 0.8
     }
     struct LevelDesigner {
         static let numOfRows = 12
@@ -40,13 +39,12 @@ struct Constants {
         static let totalNumOfBubblesInRect = Game.numOfBubblesInEvenRow * numOfRows
     }
     struct NotificationName {
-        static let reloadCell = Notification.Name("reloadCell")
-        static let gameOver = Notification.Name("gameOver")
-        static let moveCell = Notification.Name("moveCell")
-
-        static let popCell = Notification.Name("popCell")
         static let addCell = Notification.Name("addCell")
+        static let clearCell = Notification.Name("clearCell")
+        static let popCell = Notification.Name("popCell")
         static let removeDropCell = Notification.Name("removeDropCell")
+
+        static let gameOver = Notification.Name("gameOver")
         static let noBubblesLeft = Notification.Name("noBubblesLeft")
     }
 }
