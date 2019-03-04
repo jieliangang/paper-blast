@@ -83,12 +83,6 @@ class Player {
         panGestureRecognizer.isEnabled = false
     }
 
-    func swap() {
-        let tempType = currentBubbleType
-        currentBubbleType = nextBubbleType
-        nextBubbleType = tempType
-    }
-
     func decrementBubble() {
         bubblesLeft.decrement()
     }

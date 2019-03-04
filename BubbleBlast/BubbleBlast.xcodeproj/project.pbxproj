@@ -159,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				D794E50C2224F91F00F03BFE /* Configuration */,
+				D74FF50F2226D02D00B3DDC5 /* Storage */,
 				D7693E3F2225039B001762E4 /* Data Structures */,
 				D74FF50E2226CFE900B3DDC5 /* Level Designer */,
 				D746C916222A352A00CF743A /* Level Selection */,
@@ -212,7 +213,6 @@
 			isa = PBXGroup;
 			children = (
 				D794E5162224F93700F03BFE /* BubbleGrid */,
-				D74FF50F2226D02D00B3DDC5 /* Storage */,
 				D74FF5032226CFE500B3DDC5 /* LevelDesignerController */,
 				D74FF4F82226CF8700B3DDC5 /* BubbleModel */,
 			);

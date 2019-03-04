@@ -414,12 +414,12 @@ class GameViewController: UIViewController {
     }
 
     /// Check if no colored bubble is left in the field
-    func noColoredBubblesLeft() -> Bool {
+    private func noColoredBubblesLeft() -> Bool {
         return gameEngine.bubblesLeft.isEmpty
     }
 
     /// Determine winner of the game for multiplayer mode
-    func determineWinner() -> PlayerType {
+    private func determineWinner() -> PlayerType {
         if playerOne.score.endNumber > playerTwo.score.endNumber {
             return .one
         } else if playerOne.score.endNumber < playerTwo.score.endNumber {
@@ -431,6 +431,8 @@ class GameViewController: UIViewController {
     }
 
     private func gameOverSinglePlayer(win: Bool) {
+        let bubblesLeft = playerSingle.bubblesLeft.bubblesLeft
+        playerSingle.score.increment(value: Float(bubblesLeft * 10))
         let result = Result(didWin: win,player: .single,score: Int(playerSingle.score.endNumber))
         performSegue(withIdentifier: "endScreen", sender: result)
     }

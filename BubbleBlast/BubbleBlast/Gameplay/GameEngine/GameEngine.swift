@@ -80,10 +80,6 @@ class GameEngine {
         }
     }
 
-    private func initialiseGridObjects() {
-        
-    }
-
     /// Remaining color types of stationary bubbles left
     var bubblesLeft: Set<BubbleType> {
         return Set(stationaryBubbleObjects.values
