@@ -53,6 +53,15 @@
 		D7FFE5F5222D237100759EB0 /* Maze in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5F1222D237100759EB0 /* Maze */; };
 		D7FFE5F6222D237100759EB0 /* Chaining in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5F2222D237100759EB0 /* Chaining */; };
 		D7FFE5F7222D237100759EB0 /* Introduction in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5F3222D237100759EB0 /* Introduction */; };
+		D7FFE5F9222D509100759EB0 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5F8222D509100759EB0 /* logo.png */; };
+		D7FFE5FB222D52F800759EB0 /* bgm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5FA222D52F800759EB0 /* bgm.mp3 */; };
+		D7FFE5FD222D544F00759EB0 /* bubble-pop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5FC222D544F00759EB0 /* bubble-pop.mp3 */; };
+		D7FFE5FF222D559200759EB0 /* bubble-pop.wav in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE5FE222D559200759EB0 /* bubble-pop.wav */; };
+		D7FFE601222D595D00759EB0 /* cannon-shoot.wav in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE600222D595D00759EB0 /* cannon-shoot.wav */; };
+		D7FFE603222D5A2F00759EB0 /* page-flip.wav in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE602222D5A2F00759EB0 /* page-flip.wav */; };
+		D7FFE607222D780E00759EB0 /* star.wav in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE604222D780E00759EB0 /* star.wav */; };
+		D7FFE608222D780E00759EB0 /* lightning.wav in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE605222D780E00759EB0 /* lightning.wav */; };
+		D7FFE609222D780E00759EB0 /* woosh.wav in Resources */ = {isa = PBXBuildFile; fileRef = D7FFE606222D780E00759EB0 /* woosh.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +115,15 @@
 		D7FFE5F1222D237100759EB0 /* Maze */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Maze; sourceTree = "<group>"; };
 		D7FFE5F2222D237100759EB0 /* Chaining */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Chaining; sourceTree = "<group>"; };
 		D7FFE5F3222D237100759EB0 /* Introduction */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Introduction; sourceTree = "<group>"; };
+		D7FFE5F8222D509100759EB0 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = logo.png; path = ../../Images/logo.png; sourceTree = "<group>"; };
+		D7FFE5FA222D52F800759EB0 /* bgm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = bgm.mp3; path = ../../../../Images/bgm.mp3; sourceTree = "<group>"; };
+		D7FFE5FC222D544F00759EB0 /* bubble-pop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "bubble-pop.mp3"; path = "../../../../Images/bubble-pop.mp3"; sourceTree = "<group>"; };
+		D7FFE5FE222D559200759EB0 /* bubble-pop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = "bubble-pop.wav"; path = "../../../../Images/bubble-pop.wav"; sourceTree = "<group>"; };
+		D7FFE600222D595D00759EB0 /* cannon-shoot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = "cannon-shoot.wav"; path = "../../../../Images/cannon-shoot.wav"; sourceTree = "<group>"; };
+		D7FFE602222D5A2F00759EB0 /* page-flip.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = "page-flip.wav"; path = "../../../../Images/page-flip.wav"; sourceTree = "<group>"; };
+		D7FFE604222D780E00759EB0 /* star.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = star.wav; path = ../../../../Images/star.wav; sourceTree = "<group>"; };
+		D7FFE605222D780E00759EB0 /* lightning.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = lightning.wav; path = ../../../../Images/lightning.wav; sourceTree = "<group>"; };
+		D7FFE606222D780E00759EB0 /* woosh.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = woosh.wav; path = ../../../../Images/woosh.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,6 +188,7 @@
 				D730F09122245741000FD7CB /* Assets.xcassets */,
 				D730F09322245741000FD7CB /* LaunchScreen.storyboard */,
 				D730F09622245741000FD7CB /* Info.plist */,
+				D7FFE5F8222D509100759EB0 /* logo.png */,
 			);
 			path = BubbleBlast;
 			sourceTree = "<group>";
@@ -300,6 +319,14 @@
 		D7FFE5E7222D234A00759EB0 /* Preload Data */ = {
 			isa = PBXGroup;
 			children = (
+				D7FFE605222D780E00759EB0 /* lightning.wav */,
+				D7FFE604222D780E00759EB0 /* star.wav */,
+				D7FFE606222D780E00759EB0 /* woosh.wav */,
+				D7FFE5FA222D52F800759EB0 /* bgm.mp3 */,
+				D7FFE5FC222D544F00759EB0 /* bubble-pop.mp3 */,
+				D7FFE5FE222D559200759EB0 /* bubble-pop.wav */,
+				D7FFE600222D595D00759EB0 /* cannon-shoot.wav */,
+				D7FFE602222D5A2F00759EB0 /* page-flip.wav */,
 				D7FFE5F2222D237100759EB0 /* Chaining */,
 				D7FFE5F0222D237000759EB0 /* Intermediate */,
 				D7FFE5F3222D237100759EB0 /* Introduction */,
@@ -376,14 +403,23 @@
 				D7FFE5EE222D236300759EB0 /* Intermediate.png in Resources */,
 				D7FFE5F5222D237100759EB0 /* Maze in Resources */,
 				D730F09522245741000FD7CB /* LaunchScreen.storyboard in Resources */,
+				D7FFE601222D595D00759EB0 /* cannon-shoot.wav in Resources */,
 				D7FFE5EC222D236300759EB0 /* Introduction.png in Resources */,
 				D7FFE5EF222D236300759EB0 /* Chaining.png in Resources */,
+				D7FFE607222D780E00759EB0 /* star.wav in Resources */,
+				D7FFE5FB222D52F800759EB0 /* bgm.mp3 in Resources */,
 				D7FFE5F6222D237100759EB0 /* Chaining in Resources */,
+				D7FFE609222D780E00759EB0 /* woosh.wav in Resources */,
 				D7FFE5ED222D236300759EB0 /* Maze.png in Resources */,
 				D730F09222245741000FD7CB /* Assets.xcassets in Resources */,
+				D7FFE5F9222D509100759EB0 /* logo.png in Resources */,
+				D7FFE603222D5A2F00759EB0 /* page-flip.wav in Resources */,
+				D7FFE5FD222D544F00759EB0 /* bubble-pop.mp3 in Resources */,
 				D730F0902224573F000FD7CB /* Main.storyboard in Resources */,
 				D7FFE5F4222D237100759EB0 /* Intermediate in Resources */,
+				D7FFE5FF222D559200759EB0 /* bubble-pop.wav in Resources */,
 				D7FFE5F7222D237100759EB0 /* Introduction in Resources */,
+				D7FFE608222D780E00759EB0 /* lightning.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,7 +485,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

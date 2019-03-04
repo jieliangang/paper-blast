@@ -50,7 +50,8 @@ class UICountingLabel: UILabel {
         count(fromValue: currentCounterValue, toValue: endNumber - 1, withDuration: 0.1, animationType: .linear)
     }
 
-    func count(fromValue: Float, toValue: Float, withDuration duration: TimeInterval, animationType: CounterAnimationType) {
+    func count(fromValue: Float, toValue: Float, withDuration duration: TimeInterval,
+               animationType: CounterAnimationType) {
         self.startNumber = fromValue
         self.endNumber = toValue
         self.duration = duration

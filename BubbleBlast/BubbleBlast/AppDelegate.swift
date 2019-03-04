@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         StorageManager.preloadData()
-        
         return true
     }
 

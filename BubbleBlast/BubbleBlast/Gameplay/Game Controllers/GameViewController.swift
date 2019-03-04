@@ -9,6 +9,7 @@
 import UIKit
 import CoreGraphics
 import PhysicsEngine
+import AVFoundation
 
 class GameViewController: UIViewController {
 
@@ -80,6 +81,12 @@ class GameViewController: UIViewController {
     var game = GameBubbleSet(numberOfRows: Constants.Game.numOfRows)
     var multiplayer = false
 
+    let bubblePopPlayer = ResourceManager.getAudioPlayer("bubble-pop")
+    let cannonShootPlayer = ResourceManager.getAudioPlayer("cannon-shoot")
+    let starPlayer = ResourceManager.getAudioPlayer("star")
+    let lightningPlayer = ResourceManager.getAudioPlayer("lightning")
+    let bombPlayer = ResourceManager.getAudioPlayer("woosh")
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -88,7 +95,6 @@ class GameViewController: UIViewController {
         bubbleArea.isScrollEnabled = false
         bubbleArea.collectionViewLayout = game.isHexagonal ? AlternatingBubbleLayout()
                                                            : RectangularGridLayout()
-
         // Set up game
         setupPlayerMode()
 
@@ -124,6 +130,7 @@ class GameViewController: UIViewController {
     }
 
     @IBAction func backButtonPressed(_ sender: UIButton) {
+        ResourceManager.transition()
         timer?.invalidate()
         self.dismiss(animated: true, completion: nil)
     }
@@ -218,6 +225,7 @@ class GameViewController: UIViewController {
         }
         let bubble = selectedPlayer.bubbleToShoot
         selectedPlayer.cannon.startAnimating()
+        cannonShootPlayer.play()
         gameEngine.shootBubble(originLocation: CGPoint(x: bubble.frame.midX,
                                                        y: bubble.frame.midY),
                                tapLocation: location,
@@ -337,16 +345,44 @@ class GameViewController: UIViewController {
             return
         }
         guard let type = dict["type"] as? BubbleType,
-            let playerId = dict["playerId"] as? PlayerType else {
+            let playerId = dict["playerId"] as? PlayerType,
+            let position = dict["position"] as? CGPoint else {
                 return
         }
 
         let playerWhoPopped = player(playerId)
         playerWhoPopped.score.increment(value: score(type))
 
-        UIView.setAnimationsEnabled(true)
+        // Add bubble pop sound
+        switch type {
+        case .bomb: bombPlayer.play()
+        case .lightning: lightningPlayer.play()
+        case .star: starPlayer.play()
+        default: bubblePopPlayer.play()
+        }
+
         bubbleArea.reloadData()
         updateLoadedBubbles()
+        // Show score
+        popScore(position, type)
+    }
+
+    // Pop score
+    func popScore(_ position: CGPoint, _ type: BubbleType) {
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: bubbleSize * 0.9, height: bubbleSize * 0.5))
+        label.center = position
+        label.textAlignment = .center
+        label.font = UIFont(name: "Chalkduster", size: 20)
+        label.textColor = ResourceManager.color(of: type)
+        label.adjustsFontSizeToFitWidth = true
+        label.text = "\(score(type))"
+        inputArea.addSubview(label)
+
+        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut, animations: {
+            label.center.y -= 20
+        }, completion: { _ in
+            label.removeFromSuperview()
+        })
     }
 
     // Update score based on bubbles dropped off screen
@@ -433,12 +469,12 @@ class GameViewController: UIViewController {
     private func gameOverSinglePlayer(win: Bool) {
         let bubblesLeft = playerSingle.bubblesLeft.bubblesLeft
         playerSingle.score.increment(value: Float(bubblesLeft * 10))
-        let result = Result(didWin: win,player: .single,score: Int(playerSingle.score.endNumber))
+        let result = Result(didWin: win, player: .single, score: Int(playerSingle.score.endNumber))
         performSegue(withIdentifier: "endScreen", sender: result)
     }
 
     private func gameOverMultiPlayer(_ winner: PlayerType) {
-        let result = Result(didWin: true,player: winner,score: Int(player(winner).score.endNumber))
+        let result = Result(didWin: true, player: winner, score: Int(player(winner).score.endNumber))
         performSegue(withIdentifier: "endScreen", sender: result)
     }
 

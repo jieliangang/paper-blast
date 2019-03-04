@@ -14,7 +14,7 @@ import UIKit
  */
 class BubbleCell: UICollectionViewCell {
 
-    @IBOutlet private var bubbleImage: UIImageView!
+    @IBOutlet var bubbleImage: UIImageView!
 
     func setImage(_ image: UIImage?) {
         self.bubbleImage.image = image

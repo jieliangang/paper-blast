@@ -42,7 +42,7 @@ extension UIAlertController {
 
     static func invalidNameAlert() -> UIAlertController {
         let invalidStringAlertController = UIAlertController(title: "Invalid name",
-                                                   message: "Name cannot be empty or exceed 30 characters, and must be alphanumeric",
+                                                   message: "Name cannot be empty or exceed 30 characters",
                                                    preferredStyle: .alert)
         invalidStringAlertController.addAction(UIAlertAction(title: "Ok", style: .default) { _  in
             print("Invalid name")

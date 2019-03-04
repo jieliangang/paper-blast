@@ -154,7 +154,7 @@ class StorageManager {
         }
         return []
     }
-    
+
     static func preloadData() {
         let preloadFileNames = ["Chaining", "Intermediate", "Introduction", "Maze"]
         let fileManager = FileManager.default

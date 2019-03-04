@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import AVFoundation
 
 class ResourceManager {
     static func imageName(of type: BubbleType) -> String {
@@ -32,11 +33,40 @@ class ResourceManager {
 
     static func color(of type: BubbleType) -> UIColor {
         switch type {
-        case .colorRed: return .red
-        case .colorBlue: return .blue
-        case .colorGreen: return .green
-        case .colorYellow: return .yellow
+        case .colorRed: return UIColor(red: 241/255, green: 82/255, blue: 117/255, alpha: 1)
+        case .colorBlue: return UIColor(red: 104/255, green: 184/255, blue: 245/255, alpha: 1)
+        case .colorGreen: return UIColor(red: 139/255, green: 234/255, blue: 198/255, alpha: 1)
+        case .colorYellow: return UIColor(red: 245/255, green: 178/255, blue: 84/255, alpha: 1)
+        case .bomb: return UIColor(red: 213/255, green: 102/255, blue: 103/255, alpha: 1)
+        case .lightning: return UIColor(red: 248/255, green: 202/255, blue: 75/255, alpha: 1)
+        case .star: return UIColor(red: 82/255, green: 60/255, blue: 228/255, alpha: 1)
+        case .indestructible: return UIColor(red: 137/255, green: 145/255, blue: 156/255, alpha: 1)
         default: return .black
         }
+    }
+
+    static func getAudioPlayer(_ name: String) -> AVAudioPlayer {
+        var audioPlayer = AVAudioPlayer()
+        let sound = NSURL(fileURLWithPath: Bundle.main.path(forResource: name, ofType: "wav")!)
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: sound as URL)
+        } catch {
+            print("fail to load player!")
+        }
+        audioPlayer.prepareToPlay()
+        //audioPlayer.numberOfLoops = 1
+        return audioPlayer
+    }
+
+    static func transition() {
+        var audioPlayer = AVAudioPlayer()
+        let sound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "page-flip", ofType: "wav")!)
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: sound as URL)
+        } catch {
+            print("failed to load player!")
+        }
+        audioPlayer.prepareToPlay()
+        audioPlayer.play()
     }
 }

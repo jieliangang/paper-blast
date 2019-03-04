@@ -41,6 +41,7 @@ class LevelSelectionViewController: UIViewController {
     }
 
     @IBAction func backButtonPressed(_ sender: UIButton) {
+        ResourceManager.transition()
         dismiss(animated: true, completion: nil)
     }
 

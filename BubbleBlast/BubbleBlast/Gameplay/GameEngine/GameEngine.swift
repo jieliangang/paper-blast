@@ -184,7 +184,9 @@ extension GameEngine {
         stationaryBubbleObjectsMap.removeValue(forKey: object)
         physicsEngine.removeStationaryBody(object.body)
         dictionary.removeValue(forKey: ObjectIdentifier(object.body))
-        popCell(type: object.type, playerId: player, index: index)
+
+        let position = object.body.position.toCGPoint()
+        popCell(type: object.type, playerId: player, index: index, position: position)
 
         // Handle triggering of power bubbles
         switch object.type {
@@ -227,10 +229,12 @@ extension GameEngine {
     }
 
     /// Send notification to controller to pop cell in bubble collection view for score calculation
-    private func popCell(type: BubbleType, playerId: PlayerType, index: Int) {
+    private func popCell(type: BubbleType, playerId: PlayerType, index: Int, position: CGPoint) {
         NotificationCenter.default.post(name: Constants.NotificationName.popCell,
-                                        object: nil, userInfo: ["type": type, "playerId": playerId, "index": index])
+                                        object: nil, userInfo: ["type": type, "playerId": playerId,
+                                                                "index": index, "position": position])
     }
+
     /// Send notification to controller to indicate bubble dropping to ground for score calculation
     private func bubbleReachGround(type: BubbleType, playerId: PlayerType) {
         NotificationCenter.default.post(name: Constants.NotificationName.removeDropCell,

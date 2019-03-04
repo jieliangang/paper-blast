@@ -85,7 +85,7 @@ class GameBubbleSet: Codable {
     var bubbleTypes: [BubbleType] {
         return bubbles.map { $0.type }
     }
-    
+
     /// Update model when alternating between layouts
     func updateGridLayout(toHex: Bool) {
         guard isHexagonal != toHex else {

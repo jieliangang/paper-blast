@@ -14,7 +14,7 @@ class EndScreenViewController: UIViewController {
     @IBOutlet private var endScreenText: UILabel!
     @IBOutlet private var endScreenImage: UIImageView!
     @IBOutlet private var finalScore: UICountingLabel!
-    
+
     var result = Result(didWin: true, player: .bot, score: 0)
 
     let successImage = UIImage(named: "trophy.png")
@@ -48,6 +48,7 @@ class EndScreenViewController: UIViewController {
     }
 
     @IBAction func back(_ sender: UIButton) {
+        ResourceManager.transition()
         self.presentingViewController?.presentingViewController?.dismiss(animated: false, completion: nil)
     }
 }
